@@ -1,0 +1,106 @@
+[
+	{
+		"file": "C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\UNPJ.Build.cs",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\UNPJ.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\UNPJ.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\UNPJCharacter.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\UNPJCharacter.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\UNPJGameMode.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\UNPJGameMode.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\UNPJPickUpComponent.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\UNPJPickUpComponent.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\UNPJProjectile.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\UNPJProjectile.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\UNPJWeaponComponent.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\UNPJWeaponComponent.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	}
+]
