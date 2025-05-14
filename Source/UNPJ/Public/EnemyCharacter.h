@@ -11,4 +11,19 @@ class UNPJ_API AEnemyCharacter : public ACharacter
 
 public:
     AEnemyCharacter();
+
+    virtual void Tick(float DeltaTime) override;
+
+    void PlayWalkAnimation();     // 걷는 애니메이션 재생
+    void PlayIdleAnimation();     // 도착 애니메이션 재생
+
+protected:
+    UPROPERTY(EditAnywhere, Category = "Animation")
+    UAnimationAsset* WalkAnimation;
+
+    UPROPERTY(EditAnywhere, Category = "Animation")
+    UAnimationAsset* IdleAnimation;
+
+private:
+    UAnimationAsset* CurrentAnim = nullptr;
 };

@@ -1,38 +1,36 @@
-﻿// EController.cpp
-
+﻿#include "EController.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/Pawn.h"
 #include "EController.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
-#include "EnemyCharacter.h" // ✅ 네가 만든 NPC 클래스 반드시 포함
+#include "EnemyCharacter.h"
+#include "AIController.h"            
+#include "GameFramework/PlayerController.h"
+#include "NavigationSystem.h" 
 
-AEController::AEController()
-{
-    PrimaryActorTick.bCanEverTick = true;
-    UE_LOG(LogTemp, Warning, TEXT("📦 EController 생성됨"));
 
-}
 
 void AEController::BeginPlay()
 {
     Super::BeginPlay();
-    UE_LOG(LogTemp, Warning, TEXT("🔥 BeginPlay: AIController running"));
-
-    // ✅ 명확하게 EnemyCharacter를 찾음 (절대 플레이어 캐릭터 아님)
-    AEnemyCharacter* Found = Cast<AEnemyCharacter>(
-        UGameplayStatics::GetActorOfClass(GetWorld(), AEnemyCharacter::StaticClass()));
-
-    if (Found && !Found->IsPlayerControlled())
-    {
-        UE_LOG(LogTemp, Warning, TEXT("👉 Possessing Enemy: %s"), *Found->GetName());
-        Possess(Found);
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("❌ EnemyCharacter를 찾지 못했거나 이미 플레이어가 제어 중"));
-    }
 
     PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+    if (PlayerPawn && GetPawn())
+    {
+        SetFocus(PlayerPawn);
+        MoveToActor(PlayerPawn, AcceptanceRadius);
+
+        AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(GetPawn());
+        if (Enemy)
+        {
+            Enemy->PlayWalkAnimation();  // ✅ 최초 걷기 애니 시작
+        }
+
+        bIsMoving = true;
+    }
 }
+
 
 void AEController::Tick(float DeltaSeconds)
 {
@@ -40,15 +38,40 @@ void AEController::Tick(float DeltaSeconds)
 
     if (!PlayerPawn || !GetPawn()) return;
 
-    float Distance = FVector::Dist(PlayerPawn->GetActorLocation(), GetPawn()->GetActorLocation());
-    UE_LOG(LogTemp, Warning, TEXT("📏 거리: %f"), Distance);
+    APawn* ControlledPawn = GetPawn();
+    float Distance = FVector::Dist(PlayerPawn->GetActorLocation(), ControlledPawn->GetActorLocation());
+    float Speed = ControlledPawn->GetVelocity().Size();
 
-    if (Distance > StopDistance)
+    AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(ControlledPawn);
+    if (!Enemy) return;
+
+    const bool bIsCloseEnough = Distance <= AcceptanceRadius;
+    const bool bIsStopped = Speed < 5.f;
+
+    if (bIsCloseEnough && bIsStopped)
     {
-        MoveToActor(PlayerPawn);
+        if (bIsMoving)
+        {
+            StopMovement();
+            ClearFocus(EAIFocusPriority::Default);
+            Enemy->PlayIdleAnimation();
+            bIsMoving = false;
+
+            UE_LOG(LogTemp, Warning, TEXT("🛑 멈춤 + Idle 전환: 거리 %.1f, 속도 %.1f"), Distance, Speed);
+        }
     }
     else
     {
-        StopMovement(); // ✔ 안전하게 작동함
+        if (!bIsMoving)
+        {
+            StopMovement();
+            ClearFocus(EAIFocusPriority::Default);
+            MoveToActor(PlayerPawn, AcceptanceRadius);
+            SetFocus(PlayerPawn);
+            Enemy->PlayWalkAnimation();
+            bIsMoving = true;
+
+            UE_LOG(LogTemp, Warning, TEXT("🏃 걷기 시작: 거리 %.1f, 속도 %.1f"), Distance, Speed);
+        }
     }
 }
