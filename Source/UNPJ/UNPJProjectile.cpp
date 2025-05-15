@@ -3,6 +3,7 @@
 #include "UNPJProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
+#include "Particles/ParticleSystemComponent.h" // 파티클 시스템 컴포넌트 추가
 
 AUNPJProjectile::AUNPJProjectile() 
 {
@@ -19,25 +20,27 @@ AUNPJProjectile::AUNPJProjectile()
 	// Set as root component
 	RootComponent = CollisionComp;
 
+	// 총알 메시 root 아래로 설정
+	BulletMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BulletMesh"));
+	BulletMesh->SetupAttachment(RootComponent);
+
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;
 	ProjectileMovement->InitialSpeed = 3000.f;
 	ProjectileMovement->MaxSpeed = 3000.f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
-	ProjectileMovement->bShouldBounce = true;
 
-	// Die after 3 seconds by default
+	// 총알은 3초까지만 유지후 삭제
 	InitialLifeSpan = 3.0f;
 }
 
 void AUNPJProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
+	
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && !( OtherActor->ActorHasTag("Player") ) ) // 내 캐릭터는 무시
 	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
-
-		Destroy();
+		Destroy(); // 일단 총알이 뭔가랑 부딪히기만 하면 총알 삭제
+		UE_LOG(LogTemp, Warning, TEXT("총알이랑 부딪힌 액터 이름 : %s"), *OtherActor->GetName());
 	}
 }

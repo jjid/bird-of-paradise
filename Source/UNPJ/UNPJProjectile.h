@@ -22,6 +22,10 @@ class AUNPJProjectile : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	UProjectileMovementComponent* ProjectileMovement;
 
+	// 총알 스태틱 메시
+	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	class UStaticMeshComponent* BulletMesh;
+
 public:
 	AUNPJProjectile();
 
