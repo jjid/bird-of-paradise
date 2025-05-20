@@ -13,6 +13,8 @@
 #include "Kismet/GameplayStatics.h" // 이펙트 스폰에 필요
 #include "UNPJProjectile.h" // 총알 액터에 필요
 #include "Engine/LocalPlayer.h"
+#include "DrawDebugHelpers.h" // 디버그 그리기용 헤더 추가
+#include "Blueprint/UserWidget.h" // 위젯 사용을 위한 헤더 추가
 
 //////////////////////////////////////////////////////////////////////////
 // AUNPJCharacter
@@ -43,18 +45,41 @@ AUNPJCharacter::AUNPJCharacter()
     SM_Gun->SetRelativeRotation(FRotator::ZeroRotator);
     SM_Gun->SetVisibility(true);
 
-	// 총알 이펙트 위치 씬 컴포넌트 생성 및 SM_Gun에 부착
-	FireEffectLocation = CreateDefaultSubobject<USceneComponent>(TEXT("FireEffectLocation"));
-	FireEffectLocation->SetupAttachment(SM_Gun);
-	FireEffectLocation->SetRelativeLocation(FVector(60.f, 0.f, 15.f)); // 이펙트 위치는 필요에 따라 조정
 
-	// 총알이 진짜로 나가는 위치 씬 컴포넌트 생성 및 카메라에 부착
-	FireLocation = CreateDefaultSubobject<USceneComponent>(TEXT("FireLocation"));
-	FireLocation->SetupAttachment(FirstPersonCameraComponent);
-	FireLocation->SetRelativeLocation(FVector(100.f, 0.f, 0.f));
+	// 총알이 나가는 위치 씬 컴포넌트 생성 및 SM_Gun에 부착
+    FireLocation = CreateDefaultSubobject<USceneComponent>(TEXT("FireLocation"));
+    FireLocation->SetupAttachment(SM_Gun);
+    FireLocation->SetRelativeLocation(FVector(60.f, 0.f, 15.f)); // 위치는 필요에 따라 조정
 
 	// 태그 추가
     Tags.Add(FName("Player"));
+
+    CharacterWidget = nullptr;
+}
+
+void AUNPJCharacter::BeginPlay()
+{
+    Super::BeginPlay();
+
+    // WBP_Character 위젯 생성 및 화면에 추가
+    if (CharacterWidgetClass)
+    {
+        CharacterWidget = CreateWidget<UCharacterWidget>(GetWorld(), CharacterWidgetClass);
+        if (CharacterWidget)
+        {
+            CharacterWidget->AddToViewport();
+            // 체력바에 현재 HP 매핑
+            if (CharacterWidget->HealthBar)
+            {
+                CharacterWidget->HealthBar->SetPercent(CurrentHP / MaxHP);
+            }
+            // 경험치바에 현재 EXP 매핑
+            if (CharacterWidget->ExpBar)
+            {
+                CharacterWidget->ExpBar->SetPercent(CurrentExp / MaxExp);
+            }
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -122,25 +147,81 @@ void AUNPJCharacter::Look(const FInputActionValue& Value)
 
 void AUNPJCharacter::Fire()
 {
-	// 일단 총을 소묭ULOG로 발사 라고 찍기
-	UE_LOG(LogTemp, Warning, TEXT("Fire!"));
+    UE_LOG(LogTemp, Warning, TEXT("Fire!"));
+    UE_LOG(LogTemp, Warning, TEXT("체력 감소"));
+    SetHP(CurrentHP - 10.f); // 체력 감소
+    SetExp(CurrentExp + 10.f); // 경험치 증가
 
-	// 총알을 쏘면 FireLocation 위치에 FireEffect 이펙트를 생성 (크기는 0.3배로 설정)
-	if (FireEffect)
-	{
-		FTransform EffectTransform = FireEffectLocation->GetComponentTransform();
-		EffectTransform.SetScale3D(FVector(0.2f)); // 이펙트 크기를 0.3배로 설정
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), FireEffect, EffectTransform);
-	}
+    // 이펙트 생성
+    if (FireEffect)
+    {
+        FTransform EffectTransform = FireLocation->GetComponentTransform();
+        EffectTransform.SetScale3D(FVector(0.3f));
+        UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), FireEffect, EffectTransform);
+    }
 
-	// 총알 발사. 방시은 스폰 액터. 위치치는 이펙트와 동일.
-	if (ProjectileClass)
-	{
-		FVector SpawnLocation = FireLocation->GetComponentLocation();
-		FRotator SpawnRotation = FirstPersonCameraComponent->GetComponentRotation();
+    if (ProjectileClass)
+    {
+        FVector MuzzleLocation = FireLocation->GetComponentLocation();
+        FVector CameraLocation = FirstPersonCameraComponent->GetComponentLocation();
+        FVector CameraForward = FirstPersonCameraComponent->GetForwardVector();
 
-		// 총알 스폰, 회전은 카메라가 보는 방향으로
-		AUNPJProjectile* Projectile = GetWorld()->SpawnActor<AUNPJProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
-	}
+        // 1. 카메라에서 일정 거리(예: 10000)까지 라인 트레이스
+        FVector TraceEnd = CameraLocation + (CameraForward * 10000.f);
 
+        FHitResult HitResult;
+        FCollisionQueryParams Params;
+        Params.AddIgnoredActor(this);
+
+        FVector TargetPoint = TraceEnd;
+        if (GetWorld()->LineTraceSingleByChannel(HitResult, CameraLocation, TraceEnd, ECC_Visibility, Params))
+        {
+            TargetPoint = HitResult.ImpactPoint;
+
+            // 라인 트레이스 히트 지점에 하얀색 원 디버그 그리기
+            DrawDebugSphere(GetWorld(), TargetPoint, 16.f, 16, FColor::White, false, 2.0f);
+
+            // 총구(FireLocation)에서 히트 지점까지 빨간색 선 디버그 그리기
+            DrawDebugLine(GetWorld(), FireLocation->GetComponentLocation(), TargetPoint, FColor::Red, false, 2.0f, 0, 2.0f);
+        }
+        else
+        {
+            // 트레이스 미히트 시 끝점에 하얀색 원, 경로 빨간색 선
+            DrawDebugSphere(GetWorld(), TraceEnd, 16.f, 16, FColor::White, false, 2.0f);
+            DrawDebugLine(GetWorld(), CameraLocation, TraceEnd, FColor::Red, false, 2.0f, 0, 2.0f);
+        }
+
+        // 2. 총구에서 목표점(TargetPoint) 방향으로 회전값 계산
+        FVector ShootDir = (TargetPoint - MuzzleLocation).GetSafeNormal();
+        FRotator MuzzleRotation = ShootDir.Rotation();
+
+        // 3. 총알 스폰
+        AUNPJProjectile* Projectile = GetWorld()->SpawnActor<AUNPJProjectile>(
+            ProjectileClass,
+            MuzzleLocation,
+            MuzzleRotation
+        );
+    }
+}
+
+void AUNPJCharacter::SetHP(float NewHP)
+{
+    CurrentHP = FMath::Clamp(NewHP, 0.f, MaxHP);
+
+    // 체력바 UI 갱신
+    if (CharacterWidget && CharacterWidget->HealthBar)
+    {
+        CharacterWidget->HealthBar->SetPercent(CurrentHP / MaxHP);
+    }
+}
+
+void AUNPJCharacter::SetExp(float NewExp)
+{
+    CurrentExp = FMath::Clamp(NewExp, 0.f, MaxExp);
+
+    // 경험치바 UI 갱신
+    if (CharacterWidget && CharacterWidget->ExpBar)
+    {
+        CharacterWidget->ExpBar->SetPercent(CurrentExp / MaxExp);
+    }
 }

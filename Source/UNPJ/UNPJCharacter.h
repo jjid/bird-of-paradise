@@ -4,7 +4,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
-#include "UNPJCharacter.generated.h"
+#include "Blueprint/UserWidget.h" // 위젯 사용을 위한 헤더 추가
+#include "CharacterWidget.h" // 캐릭터 위젯 헤더 추가
+#include "UNPJCharacter.generated.h" // 반드시 마지막에 위치해야 함
 
 class UInputComponent;
 class USkeletalMeshComponent;
@@ -13,6 +15,7 @@ class UInputAction;
 class UInputMappingContext;
 struct FInputActionValue;
 class UStaticMeshComponent; // 추가
+
 
 UCLASS(config=Game)
 class AUNPJCharacter : public ACharacter
@@ -31,13 +34,9 @@ class AUNPJCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = C_Mesh, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* SM_Gun;
 
-	// 총알이 진짜로 나가는 위치
+	// 총알이 나가는 위치 컴포넌트. 하이러키는 총 아래.
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = C_Mesh, meta = (AllowPrivateAccess = "true"))
 	USceneComponent* FireLocation;
-
-	// 총쏠때 이펙트 나오는 위치 컴포넌트. 하이러키는 총 아래.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = C_Mesh, meta = (AllowPrivateAccess = "true"))
-	USceneComponent* FireEffectLocation;
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Input, meta = (AllowPrivateAccess = "true"))
@@ -66,7 +65,30 @@ class AUNPJCharacter : public ACharacter
 	// 총알 액터.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Actor, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class AUNPJProjectile> ProjectileClass;
-	
+
+	/** 캐릭터 위젯 클래스 (블루프린트에서 할당) */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_UI, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UCharacterWidget> CharacterWidgetClass;
+
+	/** 캐릭터 위젯 인스턴스 */
+	UPROPERTY()
+	UCharacterWidget* CharacterWidget;
+
+private:
+    // 체력 정보
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
+    float MaxHP = 100.f;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
+    float CurrentHP = 100.f;
+
+	// 경험치 정보
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
+	float MaxExp = 100.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
+	float CurrentExp = 0.f;
+
 public:
 	AUNPJCharacter();
 
@@ -86,11 +108,21 @@ protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	// End of APawn interface
 
+	virtual void BeginPlay() override; // BeginPlay 오버라이드 선언
+
+
 public:
 	/** Returns Mesh1P subobject **/
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+    // 체력 설정 함수
+    UFUNCTION(BlueprintCallable, Category = "C_Function")			
+    void SetHP(float NewHP);
+
+	// 경험치 설정 함수
+	UFUNCTION(BlueprintCallable, Category = "C_Function")
+	void SetExp(float NewExp);
 };
 
