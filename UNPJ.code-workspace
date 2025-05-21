@@ -1,5 +1,14 @@
 {
-	"folders": [],
+	"folders": [
+		{
+			"name": "UNPJ",
+			"path": "."
+		},
+		{
+			"name": "UE5",
+			"path": "C:\\Program Files\\Epic Games\\UE_5.5"
+		}
+	],
 	"settings": {
 		"typescript.tsc.autoDetect": "off",
 		"npm.autoDetect": "off",

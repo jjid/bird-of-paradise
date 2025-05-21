@@ -60,7 +60,7 @@ AUNPJCharacter::AUNPJCharacter()
 void AUNPJCharacter::BeginPlay()
 {
     Super::BeginPlay();
-
+    GunIdleRot = SM_Gun->GetRelativeRotation(); // 총의 초기 회전값 저장
     // WBP_Character 위젯 생성 및 화면에 추가
     if (CharacterWidgetClass)
     {
@@ -79,8 +79,24 @@ void AUNPJCharacter::BeginPlay()
                 CharacterWidget->ExpBar->SetPercent(CurrentExp / MaxExp);
             }
             // 총알 UI에 현재 총알 매핑
-            
+            if (CharacterWidget->BulletState)
+            {
+                FString BulletText = FString::Printf(TEXT("%d / %d"), CurrentBullet, MaxBullet);
+                CharacterWidget->BulletState->SetText(FText::FromString(BulletText));
+            }
         }
+    }
+}
+
+void AUNPJCharacter::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+
+    // Idle 상태에서 + 점프 중 총을 천천히 아래로 복귀
+    if (CharacterState == ECharacterState::Idle || CharacterState == ECharacterState::Jumping)
+    {
+        // 총을 천천히 아래로 복귀
+        ReturnGunToIdle(DeltaTime);
     }
 }
 
@@ -117,6 +133,9 @@ void AUNPJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		// 총 쏘기
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AUNPJCharacter::Fire);
+
+        // 재장전
+        EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &AUNPJCharacter::Reload);
 	}
 }
 
@@ -149,10 +168,22 @@ void AUNPJCharacter::Look(const FInputActionValue& Value)
 
 void AUNPJCharacter::Fire()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Fire!"));
-    UE_LOG(LogTemp, Warning, TEXT("체력 감소"));
-    SetHP(CurrentHP - 10.f); // 체력 감소
-    SetExp(CurrentExp + 10.f); // 경험치 증가
+
+    if (CharacterState != ECharacterState::Idle) return;
+    if (CurrentBullet <= 0)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("총알이 없습니다. 재장전 합니다"));
+        Reload();
+        return;
+    }
+    CharacterState = ECharacterState::Firing;
+    SetBullet(CurrentBullet - 1);
+
+    // 총을 항상 초기 위치(GunIdleRot)로 복구 후 애니메이션 시작
+    SM_Gun->SetRelativeRotation(GunIdleRot);
+    // 총쏘기 애니메이션 시작
+    FireElapsed = 0.f;
+    GetWorld()->GetTimerManager().SetTimer(FireTimerHandle, this, &AUNPJCharacter::FireInterpStep, 0.01f, true);
 
     // 이펙트 생성
     if (FireEffect)
@@ -232,9 +263,91 @@ void AUNPJCharacter::SetBullet(int32 NewBullet)
 {
     CurrentBullet = FMath::Clamp(NewBullet, 0, MaxBullet);
 
-    // 총알 UI 갱신
-    if (CharacterWidget && CharacterWidget->BulletText)
+    // 총알 UI 갱신: "현재 개수 / 맥스 개수" 형식으로 표시
+    if (CharacterWidget && CharacterWidget->BulletState)
     {
-        CharacterWidget->BulletText->SetText(FText::AsNumber(CurrentBullet));
+        FString BulletText = FString::Printf(TEXT("%d / %d"), CurrentBullet, MaxBullet);
+        CharacterWidget->BulletState->SetText(FText::FromString(BulletText));
     }
+}
+
+void AUNPJCharacter::Reload()
+{
+    if( CharacterState != ECharacterState::Idle ) return;
+    if (CurrentBullet >= MaxBullet) return;
+
+    // 총을 항상 초기 위치(GunIdleRot)로 복구 후 애니메이션 시작
+    SM_Gun->SetRelativeRotation(GunIdleRot);
+
+    CharacterState = ECharacterState::Reloading;
+    ReloadElapsed = 0.f;
+
+    GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &AUNPJCharacter::ReloadInterpStep, 0.01f, true);
+
+    UE_LOG(LogTemp, Warning, TEXT("재장전"));
+}
+
+void AUNPJCharacter::ReloadInterpStep()
+{
+    ReloadElapsed += 0.01f;
+    float Alpha = FMath::Clamp(ReloadElapsed / ReloadDuration, 0.f, 1.f);
+
+    // 시작값에서 목표값까지 Pitch를 누적 보간
+    float NewPitch = FMath::Lerp(GunIdleRot.Pitch, GunIdleRot.Pitch + 360.f, Alpha);
+    FRotator NewRot = GunIdleRot;
+    NewRot.Pitch = NewPitch;
+    SM_Gun->SetRelativeRotation(NewRot);
+
+    if (Alpha >= 1.f)
+    {
+        GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
+        UE_LOG(LogTemp, Warning, TEXT("재장전 완료"));
+        SetBullet(CurrentBullet + MaxBullet);
+        CharacterState = ECharacterState::Idle;
+    }
+}
+
+void AUNPJCharacter::FireInterpStep()
+{
+    FireElapsed += 0.01f;
+    float DeltaPitch = FireDegree * 0.01f / FireDuration; // 한 틱마다 올릴 각도
+
+    FRotator CurrentRot = SM_Gun->GetRelativeRotation();
+    CurrentRot.Pitch += DeltaPitch;
+    SM_Gun->SetRelativeRotation(CurrentRot);
+
+    if (FireElapsed >= FireDuration)
+    {
+        GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
+        CharacterState = ECharacterState::Idle;
+        // Tick에서 ReturnGunToIdle로 복귀
+    }
+}
+
+void AUNPJCharacter::ReturnGunToIdle(float DeltaTime)
+{
+    FRotator CurrentRot = SM_Gun->GetRelativeRotation();
+    
+    // 천천히 보간 (속도 조절: 10.f)
+    FRotator NewRot = FMath::RInterpTo(CurrentRot, GunIdleRot, DeltaTime, 10.f);
+    SM_Gun->SetRelativeRotation(NewRot);
+}
+
+void AUNPJCharacter::SetReloadDuration(float NewDuration)
+{
+    ReloadDuration = FMath::Max(0.1f, NewDuration); // 최소 재장전 시간은 0.1초
+}
+
+void AUNPJCharacter::Jump()
+{
+    Super::Jump();
+    UE_LOG(LogTemp, Warning, TEXT("점프 시작!"));
+    CharacterState = ECharacterState::Jumping;
+}
+
+void AUNPJCharacter::Landed(const FHitResult& Hit)
+{
+    Super::Landed(Hit);
+    UE_LOG(LogTemp, Warning, TEXT("착지!"));
+    CharacterState = ECharacterState::Idle;
 }

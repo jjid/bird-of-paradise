@@ -4,8 +4,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
-#include "Blueprint/UserWidget.h" // 위젯 사용을 위한 헤더 추가
-#include "CharacterWidget.h" // 캐릭터 위젯 헤더 추가
+#include "Blueprint/UserWidget.h" // 위젯 사용 헤더
+#include "CharacterWidget.h"      // 캐릭터 위젯 헤더
 #include "UNPJCharacter.generated.h" // 반드시 마지막에 위치해야 함
 
 class UInputComponent;
@@ -14,127 +14,178 @@ class UCameraComponent;
 class UInputAction;
 class UInputMappingContext;
 struct FInputActionValue;
-class UStaticMeshComponent; // 추가
+class UStaticMeshComponent;
 
+// 캐릭터 상태 열거형 변수
+UENUM(BlueprintType)
+enum class ECharacterState : uint8
+{
+    Idle        UMETA(DisplayName = "Idle"), // 평상시 움직이는 상태
+    Firing      UMETA(DisplayName = "Firing"), // 총 쏘는 상태
+	Jumping     UMETA(DisplayName = "Jumping"),// 점프
+	UsingSkiill UMETA(DisplayName = "UsingSkill"), // 스킬 사용
+    Reloading   UMETA(DisplayName = "Reloading"), // 재장전
+    Dead        UMETA(DisplayName = "Dead") // 엄
+};
 
 UCLASS(config=Game)
 class AUNPJCharacter : public ACharacter
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	/** Pawn mesh: 1st person view (arms; seen only by self) */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= C_Mesh, meta = (AllowPrivateAccess = "true"))
-	USkeletalMeshComponent* Mesh1P;
+    // ====== 컴포넌트 ======
+    /** 1인칭 팔 메시 (본인만 볼 수 있음) */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= C_Mesh, meta = (AllowPrivateAccess = "true"))
+    USkeletalMeshComponent* Mesh1P;
 
-	/** First person camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = C_Camera, meta = (AllowPrivateAccess = "true"))
-	UCameraComponent* FirstPersonCameraComponent;
+    /** 1인칭 카메라 */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = C_Camera, meta = (AllowPrivateAccess = "true"))
+    UCameraComponent* FirstPersonCameraComponent;
 
-	/** 1인칭 카메라 하위에 부착되는 스태틱 메시(총) */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = C_Mesh, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* SM_Gun;
+    /** 1인칭 카메라 하위에 부착되는 스태틱 메시(총) */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = C_Mesh, meta = (AllowPrivateAccess = "true"))
+    UStaticMeshComponent* SM_Gun;
 
-	// 총알이 나가는 위치 컴포넌트. 하이러키는 총 아래.
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = C_Mesh, meta = (AllowPrivateAccess = "true"))
-	USceneComponent* FireLocation;
+    /** 총알이 나가는 위치 컴포넌트 (총 아래에 부착) */
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = C_Mesh, meta = (AllowPrivateAccess = "true"))
+    USceneComponent* FireLocation;
 
-	/** MappingContext */
+    // ====== 입력 관련 ======
+    /** 입력 매핑 컨텍스트 */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Input, meta = (AllowPrivateAccess = "true"))
+    UInputMappingContext* DefaultMappingContext;
+
+    /** 점프 입력 액션 */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= C_Input, meta=(AllowPrivateAccess = "true"))
+    UInputAction* JumpAction;
+
+    /** 이동 입력 액션 */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= C_Input, meta=(AllowPrivateAccess = "true"))
+    UInputAction* MoveAction;
+
+    /** 시야 입력 액션 */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Input, meta = (AllowPrivateAccess = "true"))
+    UInputAction* LookAction;
+
+	/** 재장전 입력 액션 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Input, meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* DefaultMappingContext;
+	UInputAction* ReloadAction;
 
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= C_Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* JumpAction;
+    /** 총 발사 입력 액션 (마우스 왼쪽 클릭) */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Input, meta = (AllowPrivateAccess = "true"))
+    UInputAction* FireAction;
 
-	/** Move Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= C_Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* MoveAction;
+    // ====== 이펙트/액터 관련 ======
+    /** 총 발사 시 나오는 파티클 이펙트 */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Effects, meta = (AllowPrivateAccess = "true"))
+    UParticleSystem* FireEffect;
 
-	/** Look Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* LookAction;
+    /** 총알 액터 클래스 */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Actor, meta = (AllowPrivateAccess = "true"))
+    TSubclassOf<class AUNPJProjectile> ProjectileClass;
 
-	// 총알을 쏘는 액션 - 마우스 왼클릭
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* FireAction;
+    // ====== UI 관련 ======
+    /** 캐릭터 위젯 클래스 (블루프린트에서 할당) */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_UI, meta = (AllowPrivateAccess = "true"))
+    TSubclassOf<UCharacterWidget> CharacterWidgetClass;
 
-	// 총알 쏠 때 나오는 케스케이드 이펙트 . 필요한 헤더 파일 추가
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Effects, meta = (AllowPrivateAccess = "true"))
-	class UParticleSystem* FireEffect;
-
-	// 총알 액터.
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Actor, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<class AUNPJProjectile> ProjectileClass;
-
-	/** 캐릭터 위젯 클래스 (블루프린트에서 할당) */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_UI, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UCharacterWidget> CharacterWidgetClass;
-
-	/** 캐릭터 위젯 인스턴스 */
-	UPROPERTY()
-	UCharacterWidget* CharacterWidget;
+    /** 캐릭터 위젯 인스턴스 */
+    UPROPERTY()
+    UCharacterWidget* CharacterWidget;
 
 private:
-    // 체력 정보
+	/** 캐릭터 상태 (Idle, Firing, Jumping 등) */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "C_State", meta = (AllowPrivateAccess = "true"))
+    ECharacterState CharacterState = ECharacterState::Idle;
+
+    // ====== 캐릭터 스탯 ======
+    /** 최대 체력 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
     float MaxHP = 100.f;
 
+    /** 현재 체력 */
     UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
     float CurrentHP = 100.f;
 
-	// 경험치 정보
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
-	float MaxExp = 100.f;
+    /** 최대 경험치 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
+    float MaxExp = 100.f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
-	float CurrentExp = 0.f;
+    /** 현재 경험치 */
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
+    float CurrentExp = 0.f;
 
-	// 총알
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
-	int32 CurrentBullet = 6;
+    /** 현재 총알 개수 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
+    int32 CurrentBullet = 6;
 
-	// 총알 최대 개수
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
-	int32 MaxBullet = 6;
+    /** 최대 총알 개수 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
+    int32 MaxBullet = 6;
 
-public:
-	AUNPJCharacter();
+	/** 재장전 애니메이션 */
+    float ReloadElapsed = 0.f;
+    float ReloadDuration = 0.5f; // 재장전 시간
+    FTimerHandle ReloadTimerHandle;
 
-protected:
-	/** Called for movement input */
-	void Move(const FInputActionValue& Value);
+	void ReloadInterpStep(); // 재장전 애니메이션 회전값 보간
+	FRotator GunIdleRot; // 총의 기본(초기) 회전값
+	/** 총 쏘는 애니메이션 */
+    float FireElapsed = 0.f;
+    float FireDuration = 0.35f; // 총 쏘는 시간
+	float FireDegree = 40.f; // 총 쏠떄 튀는 각도( 0.01 곱하기 틱 시간 )
+	FTimerHandle FireTimerHandle;
 
-	/** Called for looking input */
-	void Look(const FInputActionValue& Value);
-
-	// 총 쏠떄 실행되는 함수
-	void Fire();
-
-protected:
-	// APawn interface
-	virtual void NotifyControllerChanged() override;
-	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
-	// End of APawn interface
-
-	virtual void BeginPlay() override; // BeginPlay 오버라이드 선언
-
+	void FireInterpStep(); // 총쏘는 애니메이션 회전값 위로 보간
+    void ReturnGunToIdle(float DeltaTime); // 아래로 보간.
 
 public:
-	/** Returns Mesh1P subobject **/
-	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
-	/** Returns FirstPersonCameraComponent subobject **/
-	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+    AUNPJCharacter();
 
-    // 체력 설정 함수
+protected:
+    // ====== 입력 함수 ======
+    /** 이동 입력 처리 */
+    void Move(const FInputActionValue& Value);
+
+    /** 시야 입력 처리 */
+    void Look(const FInputActionValue& Value);
+
+    /** 총 발사 함수 */
+    void Fire();
+
+    /** 재장전 함수 */
+    void Reload();
+
+    // ====== 엔진 오버라이드 ======
+    virtual void NotifyControllerChanged() override;
+    virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
+    virtual void BeginPlay() override;
+	virtual void Jump() override;
+	virtual void Landed(const FHitResult& Hit) override;
+	virtual void Tick(float DeltaTime) override;
+
+public:
+    // ====== Getter ======
+    /** 1인칭 팔 메시 반환 */
+    USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
+    /** 1인칭 카메라 반환 */
+    UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+
+    // ====== 스탯 설정 함수 ======
+    /** 체력 설정 */
     UFUNCTION(BlueprintCallable, Category = "C_Function")			
     void SetHP(float NewHP);
 
-	// 경험치 설정 함수
-	UFUNCTION(BlueprintCallable, Category = "C_Function")
-	void SetExp(float NewExp);
+    /** 경험치 설정 */
+    UFUNCTION(BlueprintCallable, Category = "C_Function")
+    void SetExp(float NewExp);
 
-	// 총알 설정 함수
-	UFUNCTION(BlueprintCallable, Category = "C_Function")
-	void SetBullet(int32 NewBullet);
+    /** 총알 개수 설정 */
+    UFUNCTION(BlueprintCallable, Category = "C_Function")
+    void SetBullet(int32 NewBullet);
+
+	// 재장전 시간 설정 함수
+    UFUNCTION(BlueprintCallable, Category = "C_Function")
+    void SetReloadDuration(float NewDuration);
 };
 

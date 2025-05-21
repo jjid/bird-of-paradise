@@ -7,6 +7,7 @@
 #include "Components/CanvasPanel.h"
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"// 텍스트 블록 헤더
 #include "CharacterWidget.generated.h"
 
 UCLASS()
@@ -30,4 +31,8 @@ public:
 	// 경험치 바
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* ExpBar;
+
+    //총알 텍스트 ( 현재 개수 / 최대 개수 )
+    UPROPERTY(meta = (BindWidget))
+    UTextBlock* BulletState;
 };
