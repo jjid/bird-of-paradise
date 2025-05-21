@@ -19,7 +19,7 @@ void AEController::BeginPlay()
     if (PlayerPawn && GetPawn())
     {
         SetFocus(PlayerPawn);
-        MoveToActor(PlayerPawn, AcceptanceRadius);
+        MoveToActor(PlayerPawn, AcceptanceRadius-100, true, true, true, nullptr, false);
 
         AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(GetPawn());
         if (Enemy)
@@ -60,18 +60,13 @@ void AEController::Tick(float DeltaSeconds)
             UE_LOG(LogTemp, Warning, TEXT("🛑 멈춤 + Idle 전환: 거리 %.1f, 속도 %.1f"), Distance, Speed);
         }
     }
-    else
+    else if (!bIsCloseEnough)
     {
-        if (!bIsMoving)
-        {
-            StopMovement();
-            ClearFocus(EAIFocusPriority::Default);
-            MoveToActor(PlayerPawn, AcceptanceRadius);
-            SetFocus(PlayerPawn);
-            Enemy->PlayWalkAnimation();
-            bIsMoving = true;
+        MoveToActor(PlayerPawn, AcceptanceRadius-100, true, true, true, nullptr, false);
+        SetFocus(PlayerPawn);
+        Enemy->PlayWalkAnimation();
+        bIsMoving = true;
 
-            UE_LOG(LogTemp, Warning, TEXT("🏃 걷기 시작: 거리 %.1f, 속도 %.1f"), Distance, Speed);
-        }
+        UE_LOG(LogTemp, Warning, TEXT("🏃 다시 추적 시작: 거리 %.1f, 속도 %.1f"), Distance, Speed);
     }
 }
