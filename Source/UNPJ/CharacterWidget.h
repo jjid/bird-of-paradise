@@ -35,4 +35,12 @@ public:
     //총알 텍스트 ( 현재 개수 / 최대 개수 )
     UPROPERTY(meta = (BindWidget))
     UTextBlock* BulletState;
+
+    // 체력 텍스트 ( 현재 체력 / 최대 체력 )
+    UPROPERTY(meta = (BindWidget))
+    UTextBlock* HealthState;
+
+    // 경험치 텍스트 ( 현재 경험치 / 최대 경험치 )
+    UPROPERTY(meta = (BindWidget))
+    UTextBlock* ExpState;
 };

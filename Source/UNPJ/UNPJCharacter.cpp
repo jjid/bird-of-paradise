@@ -84,6 +84,18 @@ void AUNPJCharacter::BeginPlay()
                 FString BulletText = FString::Printf(TEXT("%d / %d"), CurrentBullet, MaxBullet);
                 CharacterWidget->BulletState->SetText(FText::FromString(BulletText));
             }
+            // 체력 텍스트 UI에 현재 체력 매핑
+            if (CharacterWidget->HealthState)
+            {
+                FString HealthText = FString::Printf(TEXT("%.0f / %.0f"), CurrentHP, MaxHP);
+                CharacterWidget->HealthState->SetText(FText::FromString(HealthText));
+            }
+            // 경험치 텍스트 UI에 현재 경험치 매핑
+            if (CharacterWidget->ExpState)
+            {
+                FString ExpText = FString::Printf(TEXT("%.0f / %.0f"), CurrentExp, MaxExp);
+                CharacterWidget->ExpState->SetText(FText::FromString(ExpText));
+            }
         }
     }
 }
@@ -176,6 +188,11 @@ void AUNPJCharacter::Fire()
         Reload();
         return;
     }
+    // 경험치 증가
+    SetExp(CurrentExp + 10.f);
+    // 체력 감소
+    SetHP(CurrentHP - 10.f);
+
     CharacterState = ECharacterState::Firing;
     SetBullet(CurrentBullet - 1);
 
@@ -245,6 +262,9 @@ void AUNPJCharacter::SetHP(float NewHP)
     if (CharacterWidget && CharacterWidget->HealthBar)
     {
         CharacterWidget->HealthBar->SetPercent(CurrentHP / MaxHP);
+        // 체력 텍스트 갱신
+        FString HealthText = FString::Printf(TEXT("%.0f / %.0f"), CurrentHP, MaxHP);
+        CharacterWidget->HealthState->SetText(FText::FromString(HealthText));
     }
 }
 
@@ -256,6 +276,9 @@ void AUNPJCharacter::SetExp(float NewExp)
     if (CharacterWidget && CharacterWidget->ExpBar)
     {
         CharacterWidget->ExpBar->SetPercent(CurrentExp / MaxExp);
+        // 경험치 텍스트 갱신
+        FString ExpText = FString::Printf(TEXT("%.0f / %.0f"), CurrentExp, MaxExp);
+        CharacterWidget->ExpState->SetText(FText::FromString(ExpText));
     }
 }
 
@@ -266,7 +289,7 @@ void AUNPJCharacter::SetBullet(int32 NewBullet)
     // 총알 UI 갱신: "현재 개수 / 맥스 개수" 형식으로 표시
     if (CharacterWidget && CharacterWidget->BulletState)
     {
-        FString BulletText = FString::Printf(TEXT("%d / %d"), CurrentBullet, MaxBullet);
+        FString BulletText = FString::Printf(TEXT("%.0f / %.0f"), CurrentBullet, MaxBullet);
         CharacterWidget->BulletState->SetText(FText::FromString(BulletText));
     }
 }
@@ -342,6 +365,10 @@ void AUNPJCharacter::Jump()
 {
     Super::Jump();
     UE_LOG(LogTemp, Warning, TEXT("점프 시작!"));
+    // 경험지 감소
+    SetExp(CurrentExp - 10.f);
+    // 체력 증가
+    SetHP(CurrentHP + 10.f);
     CharacterState = ECharacterState::Jumping;
 }
 
