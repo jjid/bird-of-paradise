@@ -78,6 +78,8 @@ void AUNPJCharacter::BeginPlay()
             {
                 CharacterWidget->ExpBar->SetPercent(CurrentExp / MaxExp);
             }
+            // 총알 UI에 현재 총알 매핑
+            
         }
     }
 }
@@ -223,5 +225,16 @@ void AUNPJCharacter::SetExp(float NewExp)
     if (CharacterWidget && CharacterWidget->ExpBar)
     {
         CharacterWidget->ExpBar->SetPercent(CurrentExp / MaxExp);
+    }
+}
+
+void AUNPJCharacter::SetBullet(int32 NewBullet)
+{
+    CurrentBullet = FMath::Clamp(NewBullet, 0, MaxBullet);
+
+    // 총알 UI 갱신
+    if (CharacterWidget && CharacterWidget->BulletText)
+    {
+        CharacterWidget->BulletText->SetText(FText::AsNumber(CurrentBullet));
     }
 }

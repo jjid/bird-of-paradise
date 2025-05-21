@@ -89,6 +89,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
 	float CurrentExp = 0.f;
 
+	// 총알
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
+	int32 CurrentBullet = 6;
+
+	// 총알 최대 개수
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
+	int32 MaxBullet = 6;
+
 public:
 	AUNPJCharacter();
 
@@ -124,5 +132,9 @@ public:
 	// 경험치 설정 함수
 	UFUNCTION(BlueprintCallable, Category = "C_Function")
 	void SetExp(float NewExp);
+
+	// 총알 설정 함수
+	UFUNCTION(BlueprintCallable, Category = "C_Function")
+	void SetBullet(int32 NewBullet);
 };
 
