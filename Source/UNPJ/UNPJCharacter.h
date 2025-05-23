@@ -6,6 +6,8 @@
 #include "Logging/LogMacros.h"
 #include "Blueprint/UserWidget.h" // 위젯 사용 헤더
 #include "CharacterWidget.h"      // 캐릭터 위젯 헤더
+#include "UNPJProjectile.h" // 안 넣어도 되는데 일단 넣어줌
+#include "UNPJGrenade.h" // 왜인지 모르겠는데 발사체는 어디서 이미 선언 되있고 수류탄은 안되있다고 함?
 #include "UNPJCharacter.generated.h" // 반드시 마지막에 위치해야 함
 
 class UInputComponent;
@@ -33,7 +35,7 @@ class AUNPJCharacter : public ACharacter
 {
     GENERATED_BODY()
 
-    // ====== 컴포넌트 ======
+    // ====== 컴포넌트 ======//////////////////////////////////////////////////////////
     /** 1인칭 팔 메시 (본인만 볼 수 있음) */
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= C_Mesh, meta = (AllowPrivateAccess = "true"))
     USkeletalMeshComponent* Mesh1P;
@@ -50,7 +52,11 @@ class AUNPJCharacter : public ACharacter
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = C_Mesh, meta = (AllowPrivateAccess = "true"))
     USceneComponent* FireLocation;
 
-    // ====== 입력 관련 ======
+    // 수류탄 생성 위치 - 위치는 카메라 아래에 부착
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = C_Mesh, meta = (AllowPrivateAccess = "true"))
+    USceneComponent* GrenadeLocation;
+
+    // ====== 입력 관련 ======////////////////////////////////////////////////
     /** 입력 매핑 컨텍스트 */
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Input, meta = (AllowPrivateAccess = "true"))
     UInputMappingContext* DefaultMappingContext;
@@ -75,7 +81,11 @@ class AUNPJCharacter : public ACharacter
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Input, meta = (AllowPrivateAccess = "true"))
     UInputAction* FireAction;
 
-    // ====== 이펙트/액터 관련 ======
+    // 수류탄 투척 입력 액션 G
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Input, meta = (AllowPrivateAccess = "true"))
+    UInputAction* GrenadeAction;
+
+    // ====== 이펙트/액터 관련 ======///////////////////////////////////////////
     /** 총 발사 시 나오는 파티클 이펙트 */
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Effects, meta = (AllowPrivateAccess = "true"))
     UParticleSystem* FireEffect;
@@ -83,6 +93,10 @@ class AUNPJCharacter : public ACharacter
     /** 총알 액터 클래스 */
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Actor, meta = (AllowPrivateAccess = "true"))
     TSubclassOf<class AUNPJProjectile> ProjectileClass;
+
+    /** 수류탄 액터 클래스 */
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = C_Actor, meta = (AllowPrivateAccess = "true"))
+    TSubclassOf<class AUNPJGrenade> GrenadeClass;
 
     // ====== UI 관련 ======
     /** 캐릭터 위젯 클래스 (블루프린트에서 할당) */
@@ -93,12 +107,11 @@ class AUNPJCharacter : public ACharacter
     UPROPERTY()
     UCharacterWidget* CharacterWidget;
 
-private:
 	/** 캐릭터 상태 (Idle, Firing, Jumping 등) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "C_State", meta = (AllowPrivateAccess = "true"))
     ECharacterState CharacterState = ECharacterState::Idle;
 
-    // ====== 캐릭터 스탯 ======
+    // ====== 캐릭터 스탯 ======////////////////////////////////////////////
     /** 최대 체력 */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
     float MaxHP = 100.f;
@@ -123,7 +136,7 @@ private:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
     int32 MaxBullet = 6;
 
-	/** 재장전 애니메이션 */
+	/** 재장전 애니메이션 *///////////////////////////////////////////////////////
     float ReloadElapsed = 0.f;
     float ReloadDuration = 0.5f; // 재장전 시간
     FTimerHandle ReloadTimerHandle;
@@ -139,11 +152,8 @@ private:
 	void FireInterpStep(); // 총쏘는 애니메이션 회전값 위로 보간
     void ReturnGunToIdle(float DeltaTime); // 아래로 보간.
 
-public:
-    AUNPJCharacter();
-
 protected:
-    // ====== 입력 함수 ======
+    // ====== 입력 함수 ======////////////////////////////////////////
     /** 이동 입력 처리 */
     void Move(const FInputActionValue& Value);
 
@@ -156,6 +166,9 @@ protected:
     /** 재장전 함수 */
     void Reload();
 
+    /** 수류탄 투척 함수 */
+    void ThrowGrenade();
+
     // ====== 엔진 오버라이드 ======
     virtual void NotifyControllerChanged() override;
     virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
@@ -165,6 +178,7 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 public:
+    AUNPJCharacter();
     // ====== Getter ======
     /** 1인칭 팔 메시 반환 */
     USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
@@ -180,12 +194,52 @@ public:
     UFUNCTION(BlueprintCallable, Category = "C_Function")
     void SetExp(float NewExp);
 
-    /** 총알 개수 설정 */
+    /** 총알 개수 설정 후 UI 표시 */
     UFUNCTION(BlueprintCallable, Category = "C_Function")
     void SetBullet(int32 NewBullet);
 
+    // 게임 진행중에 이벤트 발생시 스탯 변경하는 함수//////////////////////////////
 	// 재장전 시간 설정 함수
     UFUNCTION(BlueprintCallable, Category = "C_Function")
-    void SetReloadDuration(float NewDuration);
+    void SetReloadDuration(float AddDuration)
+    {
+        float NewDuration = ReloadDuration + AddDuration;
+        // 최소 재장전 시간은 0.1초
+        ReloadDuration = FMath::Max(0.1f, NewDuration);
+    }
+    // 총알 최대 갯수 변경 함수
+    UFUNCTION(BlueprintCallable, Category = "C_Function")
+    void SetMaxBullet(int32 AddBullet)
+    {
+        int32 NewBullet = MaxBullet + AddBullet;
+        // 최소 총알 개수는 1개
+        MaxBullet = FMath::Max(1, NewBullet);
+    }
+    // 총알의 속도 변경 함수
+    UFUNCTION(BlueprintCallable, Category = "C_Function")
+    void SetBulletSpeed(float AddSpeed)
+    {
+        if (ProjectileClass)
+        {
+            AUNPJProjectile* DefaultProjectile = Cast<AUNPJProjectile>(ProjectileClass->GetDefaultObject());
+            if (DefaultProjectile)
+            {
+                DefaultProjectile->SetBulletSpeed(AddSpeed);
+            }
+        }
+    }
+    // 수류탄 폭발 범위 변경 함수 -- 
+    UFUNCTION(BlueprintCallable, Category = "C_Function")
+    void SetGrenadeRadius(float AddRange)
+    {
+        if (GrenadeClass)
+        {
+            AUNPJGrenade* DefaultGrenade = Cast<AUNPJGrenade>(GrenadeClass->GetDefaultObject());
+            if (DefaultGrenade)
+            {
+                DefaultGrenade->SetExplosionRadius(AddRange);
+            }
+        }
+    }
 };
 

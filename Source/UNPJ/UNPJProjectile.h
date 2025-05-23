@@ -15,7 +15,7 @@ class AUNPJProjectile : public AActor
 	GENERATED_BODY()
 
 	/** Sphere collision component */
-	UPROPERTY(VisibleDefaultsOnly, Category=Projectile)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Projectile, meta=(AllowPrivateAccess="true"))
 	USphereComponent* CollisionComp;
 
 	/** Projectile movement component */
@@ -29,6 +29,14 @@ class AUNPJProjectile : public AActor
 public:
 	AUNPJProjectile();
 
+	/** 총알 속도 (에디터/블루프린트에서 변경 가능) */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+    float BulletSpeed = 3000.f;
+
+	// 총알 속도 바꾸는 함수
+	UFUNCTION(BlueprintCallable, Category = "Projectile")
+	void SetBulletSpeed(float AddSpeed);
+	
 	/** called when projectile hits something */
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);

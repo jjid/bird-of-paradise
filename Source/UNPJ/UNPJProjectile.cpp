@@ -13,11 +13,6 @@ AUNPJProjectile::AUNPJProjectile()
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
 	CollisionComp->OnComponentHit.AddDynamic(this, &AUNPJProjectile::OnHit);		// set up a notification for when this component hits something blocking
 
-	// Players can't walk on it
-	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
-	CollisionComp->CanCharacterStepUpOn = ECB_No;
-
-	// Set as root component
 	RootComponent = CollisionComp;
 
 	// 총알 메시 root 아래로 설정
@@ -27,8 +22,8 @@ AUNPJProjectile::AUNPJProjectile()
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileComp"));
 	ProjectileMovement->UpdatedComponent = CollisionComp;
-	ProjectileMovement->InitialSpeed = 3000.f;
-	ProjectileMovement->MaxSpeed = 3000.f;
+	ProjectileMovement->InitialSpeed = BulletSpeed;
+	ProjectileMovement->MaxSpeed = BulletSpeed;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 
 	// 총알은 3초까지만 유지후 삭제
@@ -43,4 +38,15 @@ void AUNPJProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 		Destroy(); // 일단 총알이 뭔가랑 부딪히기만 하면 총알 삭제
 		UE_LOG(LogTemp, Warning, TEXT("총알이랑 부딪힌 액터 이름 : %s"), *OtherActor->GetName());
 	}
+}
+
+void AUNPJProjectile::SetBulletSpeed(float AddSpeed)
+{
+	// 총알 속도 변경
+	float NewSpeed = FMath::Clamp(BulletSpeed + AddSpeed, 0.f, 10000.f); // 최소 0, 최대 10000으로 제한
+	UE_LOG(LogTemp, Warning, TEXT("총알 속도 : %f"), NewSpeed);
+	
+	BulletSpeed = NewSpeed;
+	ProjectileMovement->InitialSpeed = BulletSpeed;
+	ProjectileMovement->MaxSpeed = BulletSpeed;
 }

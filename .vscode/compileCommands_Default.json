@@ -72,6 +72,22 @@
 		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
 	},
 	{
+		"file": "C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\UNPJGrenade.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\UNPJGrenade.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
 		"file": "C:\\Users\\JunHyeok\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\UNPJPickUpComponent.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",

@@ -12,6 +12,7 @@
 #include "InputActionValue.h"
 #include "Kismet/GameplayStatics.h" // 이펙트 스폰에 필요
 #include "UNPJProjectile.h" // 총알 액터에 필요
+#include "UNPJProjectile.h" // 수류탄 액터에 필요
 #include "Engine/LocalPlayer.h"
 #include "DrawDebugHelpers.h" // 디버그 그리기용 헤더 추가
 #include "Blueprint/UserWidget.h" // 위젯 사용을 위한 헤더 추가
@@ -45,11 +46,15 @@ AUNPJCharacter::AUNPJCharacter()
     SM_Gun->SetRelativeRotation(FRotator::ZeroRotator);
     SM_Gun->SetVisibility(true);
 
-
 	// 총알이 나가는 위치 씬 컴포넌트 생성 및 SM_Gun에 부착
     FireLocation = CreateDefaultSubobject<USceneComponent>(TEXT("FireLocation"));
     FireLocation->SetupAttachment(SM_Gun);
     FireLocation->SetRelativeLocation(FVector(60.f, 0.f, 15.f)); // 위치는 필요에 따라 조정
+
+    // 수류탄 나가는 위치는 카메라 아래 80 0 0
+    GrenadeLocation = CreateDefaultSubobject<USceneComponent>(TEXT("GrenadeLocation"));
+    GrenadeLocation->SetupAttachment(FirstPersonCameraComponent);
+    GrenadeLocation->SetRelativeLocation(FVector(80.f, 0.f, 0.f)); // 위치는 필요에 따라 조정
 
 	// 태그 추가
     Tags.Add(FName("Player"));
@@ -148,6 +153,8 @@ void AUNPJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
         // 재장전
         EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &AUNPJCharacter::Reload);
+        // 수류탄 투척
+        EnhancedInputComponent->BindAction(GrenadeAction, ETriggerEvent::Started, this, &AUNPJCharacter::ThrowGrenade);
 	}
 }
 
@@ -188,10 +195,18 @@ void AUNPJCharacter::Fire()
         Reload();
         return;
     }
-    // 경험치 증가
-    SetExp(CurrentExp + 10.f);
-    // 체력 감소
-    SetHP(CurrentHP - 10.f);
+    // 경험치 증가 - 잘 작동함
+    //SetExp(CurrentExp + 10.f);
+    // 체력 감소 - 잘 작동함
+    //SetHP(CurrentHP - 10.f);
+    // 총알 속도 감소 - 잘 작동함
+    //SetBulletSpeed(-1000.f);
+    // 총알 최대 갯수 - 잘 작동함
+    //SetMaxBullet(1);
+    //재장전 시간 3초 증가 - 잘 작동함
+    //SetReloadDuration(3.f);
+    // 수류탄 범위 감소
+    //SetGrenadeRadius(-100.f);
 
     CharacterState = ECharacterState::Firing;
     SetBullet(CurrentBullet - 1);
@@ -254,6 +269,26 @@ void AUNPJCharacter::Fire()
     }
 }
 
+void AUNPJCharacter::ThrowGrenade()
+{
+    if (CharacterState != ECharacterState::Idle) return;
+    UE_LOG(LogTemp, Warning, TEXT("수류탄 투척!"));
+
+    //수류탄 액터 스폰
+    if (GrenadeClass)
+    {
+        FVector MuzzleLocation = GrenadeLocation->GetComponentLocation();
+        FRotator MuzzleRotation = GrenadeLocation->GetComponentRotation();
+
+        // 수류탄 스폰
+        AUNPJGrenade* Grenade = GetWorld()->SpawnActor<AUNPJGrenade>(
+            GrenadeClass,
+            MuzzleLocation,
+            MuzzleRotation
+        );
+    }
+}
+
 void AUNPJCharacter::SetHP(float NewHP)
 {
     CurrentHP = FMath::Clamp(NewHP, 0.f, MaxHP);
@@ -289,7 +324,7 @@ void AUNPJCharacter::SetBullet(int32 NewBullet)
     // 총알 UI 갱신: "현재 개수 / 맥스 개수" 형식으로 표시
     if (CharacterWidget && CharacterWidget->BulletState)
     {
-        FString BulletText = FString::Printf(TEXT("%.0f / %.0f"), CurrentBullet, MaxBullet);
+        FString BulletText = FString::Printf(TEXT("%d / %d"), CurrentBullet, MaxBullet);
         CharacterWidget->BulletState->SetText(FText::FromString(BulletText));
     }
 }
@@ -356,11 +391,6 @@ void AUNPJCharacter::ReturnGunToIdle(float DeltaTime)
     SM_Gun->SetRelativeRotation(NewRot);
 }
 
-void AUNPJCharacter::SetReloadDuration(float NewDuration)
-{
-    ReloadDuration = FMath::Max(0.1f, NewDuration); // 최소 재장전 시간은 0.1초
-}
-
 void AUNPJCharacter::Jump()
 {
     Super::Jump();
@@ -378,3 +408,5 @@ void AUNPJCharacter::Landed(const FHitResult& Hit)
     UE_LOG(LogTemp, Warning, TEXT("착지!"));
     CharacterState = ECharacterState::Idle;
 }
+
+
