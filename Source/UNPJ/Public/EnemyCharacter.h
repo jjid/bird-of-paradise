@@ -16,6 +16,7 @@ public:
 
     void PlayWalkAnimation();     // 걷는 애니메이션 재생
     void PlayIdleAnimation();     // 도착 애니메이션 재생
+    void PlayThrowAnimation();    // 던지는 애니메이션 재생
 
 protected:
     UPROPERTY(EditAnywhere, Category = "Animation")
@@ -23,6 +24,9 @@ protected:
 
     UPROPERTY(EditAnywhere, Category = "Animation")
     UAnimationAsset* IdleAnimation;
+
+    UPROPERTY(EditAnywhere, Category = "Animation")
+    UAnimationAsset* ThrowAnimation;
 
 private:
     UAnimationAsset* CurrentAnim = nullptr;

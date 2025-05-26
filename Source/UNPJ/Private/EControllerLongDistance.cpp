@@ -1,7 +1,12 @@
 #include "EControllerLongDistance.h"
 #include "Kismet/GameplayStatics.h"
-#include "GameFramework/CharacterMovementComponent.h" 
+#include "GameFramework/CharacterMovementComponent.h"
 #include "EnemyCharacter.h"
+
+void AEControllerLongDistance::ResetCharge()
+{
+    bCanCharge = true;
+}
 
 void AEControllerLongDistance::BeginPlay()
 {
@@ -17,14 +22,13 @@ void AEControllerLongDistance::BeginPlay()
         if (Enemy)
         {
             Enemy->PlayWalkAnimation();
-
-            // 기본 걷기 속도 설정
             Enemy->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
         }
 
         bIsMoving = true;
     }
 }
+
 void AEControllerLongDistance::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
@@ -38,11 +42,12 @@ void AEControllerLongDistance::Tick(float DeltaSeconds)
     float Speed = ControlledPawn->GetVelocity().Size();
 
     const bool bIsCloseEnough = Distance <= AcceptanceRadius;
-    const bool bIsStopped = Speed < 5.f;
 
-    if (!bIsCharging && Distance <= ChargeTriggerDistance)
+    // 돌진 조건
+    if (!bIsCharging && bCanCharge && Distance <= ChargeTriggerDistance)
     {
         bIsCharging = true;
+        bCanCharge = false;
 
         StopMovement();
         ClearFocus(EAIFocusPriority::Default);
@@ -51,12 +56,38 @@ void AEControllerLongDistance::Tick(float DeltaSeconds)
         FVector LaunchVelocity = Direction * ChargeSpeed;
 
         Enemy->GetCharacterMovement()->GravityScale = 0.f;
-
-        Enemy->PlayWalkAnimation(); // 돌진 애니가 있으면 변경
+        Enemy->PlayWalkAnimation(); // 돌진 애니메이션
         Enemy->LaunchCharacter(LaunchVelocity, true, true);
 
+        GetWorld()->GetTimerManager().SetTimer(
+            ChargeCooldownTimerHandle, this, &AEControllerLongDistance::ResetCharge, ChargeCooldownTime, false
+        );
     }
-    else if (!bIsCloseEnough && !bIsCharging)
+
+    // 빙글빙글 회전 (Garen E 스타일)
+    if (bIsCharging && ControlledPawn)
+    {
+        FRotator CurrentRotation = ControlledPawn->GetActorRotation();
+        float DeltaYaw = SpinSpeed * DeltaSeconds;
+        FRotator NewRotation = FRotator(0.f, CurrentRotation.Yaw + DeltaYaw, 0.f);
+        ControlledPawn->SetActorRotation(NewRotation);
+    }
+
+    // 돌진 종료 조건: 플레이어에게서 멀어짐
+    if (bIsCharging && Distance > 1500.f)
+    {
+        bIsCharging = false;
+        bIsMoving = false;
+
+        Enemy->GetCharacterMovement()->GravityScale = 1.f;
+        Enemy->PlayIdleAnimation();
+
+        MoveToActor(PlayerPawn, AcceptanceRadius - 100, true, true, true, nullptr, false);
+        SetFocus(PlayerPawn);
+    }
+
+    // 평소 추적
+    if (!bIsCharging && !bIsCloseEnough)
     {
         MoveToActor(PlayerPawn, AcceptanceRadius - 100, true, true, true, nullptr, false);
         SetFocus(PlayerPawn);
@@ -64,7 +95,9 @@ void AEControllerLongDistance::Tick(float DeltaSeconds)
         Enemy->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
         bIsMoving = true;
     }
-    else if (bIsCloseEnough && bIsStopped)
+
+    // 도착해서 멈춤
+    if (bIsCloseEnough && Speed < 5.f)
     {
         if (bIsMoving || bIsCharging)
         {
@@ -74,8 +107,6 @@ void AEControllerLongDistance::Tick(float DeltaSeconds)
 
             bIsMoving = false;
             bIsCharging = false;
-
-            // 다시 중력 복구
             Enemy->GetCharacterMovement()->GravityScale = 1.f;
         }
     }

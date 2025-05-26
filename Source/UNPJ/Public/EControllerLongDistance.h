@@ -15,21 +15,33 @@ public:
 
 protected:
     UPROPERTY(EditAnywhere, Category = "AI")
-    float AcceptanceRadius = 2000.f;
+    float AcceptanceRadius = 200.f;
 
 private:
     UPROPERTY()
     APawn* PlayerPawn = nullptr;
 
     bool bIsMoving = false;
-    bool bIsCharging = false; 
+    bool bIsCharging = false;
 
     UPROPERTY(EditAnywhere, Category = "AI")
-    float ChargeTriggerDistance = 3000.f; // 돌진 개시 거리
+    float ChargeTriggerDistance = 20000.0f;
 
     UPROPERTY(EditAnywhere, Category = "AI")
-    float ChargeSpeed = 1200.f; // 돌진 속도
+    float ChargeSpeed = 1200.f;
 
     UPROPERTY(EditAnywhere, Category = "AI")
-    float WalkSpeed = 300.f; // 기본 걷기 속도
+    float WalkSpeed = 400.f;
+
+    UPROPERTY(EditAnywhere, Category = "AI")
+    float ChargeCooldownTime = 2.0f;
+
+    UPROPERTY(EditAnywhere, Category = "AI")
+    float SpinSpeed = 360.0f; 
+
+    FTimerHandle ChargeCooldownTimerHandle;
+    bool bCanCharge = true;
+
+    UFUNCTION()
+    void ResetCharge();
 };
