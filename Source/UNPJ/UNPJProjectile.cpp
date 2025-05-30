@@ -4,6 +4,8 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
 #include "Particles/ParticleSystemComponent.h" // 파티클 시스템 컴포넌트 추가
+#include "EnemyCharacter.h" // 에너미 캐릭터 헤더 추가
+#include "UNPJCharacter.h" // 캐릭터 헤더 추가
 
 AUNPJProjectile::AUNPJProjectile() 
 {
@@ -37,6 +39,18 @@ void AUNPJProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 	{
 		Destroy(); // 일단 총알이 뭔가랑 부딪히기만 하면 총알 삭제
 		UE_LOG(LogTemp, Warning, TEXT("총알이랑 부딪힌 액터 이름 : %s"), *OtherActor->GetName());
+
+		// EnemyCharacter에 맞았는지 확인
+        if (OtherActor->IsA(AEnemyCharacter::StaticClass()))
+		{
+			OtherActor->Destroy(); // 에너미 액터 삭제
+
+			// 내 캐릭터의 경험치 증가 사발면 이거 왜 겟 오우너로는 안됨?
+			if (OwnerCharacter && OwnerCharacter->IsA(AUNPJCharacter::StaticClass()))
+			{
+				OwnerCharacter->SetExp(10.f);
+			}
+		}
 	}
 }
 

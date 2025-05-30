@@ -97,6 +97,7 @@ void AUNPJGrenade::Explode()
 }
 
 void AUNPJGrenade::SetGrenadeSpeed(float AddSpeed)
+
 {
     GrenadeSpeed += AddSpeed; // 기존 속도에 AddSpeed 더하기
     GrenadeSpeed = FMath::Max(0.f, GrenadeSpeed); // 최소 0으로 제한

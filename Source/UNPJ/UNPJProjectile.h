@@ -36,6 +36,8 @@ public:
 	// 총알 속도 바꾸는 함수
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	void SetBulletSpeed(float AddSpeed);
+
+	class AUNPJCharacter* OwnerCharacter = nullptr; // 총알을 발사한 캐릭터
 	
 	/** called when projectile hits something */
 	UFUNCTION()

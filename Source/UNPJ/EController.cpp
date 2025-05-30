@@ -57,7 +57,7 @@ void AEController::Tick(float DeltaSeconds)
             Enemy->PlayIdleAnimation();
             bIsMoving = false;
 
-            UE_LOG(LogTemp, Warning, TEXT("🛑 멈춤 + Idle 전환: 거리 %.1f, 속도 %.1f"), Distance, Speed);
+            //UE_LOG(LogTemp, Warning, TEXT("🛑 멈춤 + Idle 전환: 거리 %.1f, 속도 %.1f"), Distance, Speed);
         }
     }
     else if (!bIsCloseEnough)
@@ -67,6 +67,6 @@ void AEController::Tick(float DeltaSeconds)
         Enemy->PlayWalkAnimation();
         bIsMoving = true;
 
-        UE_LOG(LogTemp, Warning, TEXT("🏃 다시 추적 시작: 거리 %.1f, 속도 %.1f"), Distance, Speed);
+        //UE_LOG(LogTemp, Warning, TEXT("🏃 다시 추적 시작: 거리 %.1f, 속도 %.1f"), Distance, Speed);
     }
 }

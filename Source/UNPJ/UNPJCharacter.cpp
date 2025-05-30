@@ -195,10 +195,10 @@ void AUNPJCharacter::Fire()
         Reload();
         return;
     }
-    // 경험치 증가 - 잘 작동함
-    //SetExp(CurrentExp + 10.f);
+    //경험치 증가 - 잘 작동함
+    //SetExp(10.f);
     // 체력 감소 - 잘 작동함
-    //SetHP(CurrentHP - 10.f);
+    //SetHP(-10.f);
     // 총알 속도 감소 - 잘 작동함
     //SetBulletSpeed(-1000.f);
     // 총알 최대 갯수 - 잘 작동함
@@ -261,11 +261,16 @@ void AUNPJCharacter::Fire()
         FRotator MuzzleRotation = ShootDir.Rotation();
 
         // 3. 총알 스폰
+        FActorSpawnParameters SpawnParams;
+        SpawnParams.Owner = this; // 내 캐릭터를 Owner로 지정
         AUNPJProjectile* Projectile = GetWorld()->SpawnActor<AUNPJProjectile>(
             ProjectileClass,
             MuzzleLocation,
-            MuzzleRotation
+            MuzzleRotation,
+            SpawnParams
         );
+        Projectile->OwnerCharacter = this;
+        //if (Projectile) UE_LOG(LogTemp, Warning, TEXT("Spawned Projectile Owner: %s"), Projectile->GetOwner() ? *Projectile->GetOwner()->GetName() : TEXT("없음"));
     }
 }
 
@@ -289,9 +294,9 @@ void AUNPJCharacter::ThrowGrenade()
     }
 }
 
-void AUNPJCharacter::SetHP(float NewHP)
+void AUNPJCharacter::SetHP(float AddHP)
 {
-    CurrentHP = FMath::Clamp(NewHP, 0.f, MaxHP);
+    CurrentHP = FMath::Clamp(CurrentHP + AddHP, 0.f, MaxHP);
 
     // 체력바 UI 갱신
     if (CharacterWidget && CharacterWidget->HealthBar)
@@ -303,9 +308,9 @@ void AUNPJCharacter::SetHP(float NewHP)
     }
 }
 
-void AUNPJCharacter::SetExp(float NewExp)
+void AUNPJCharacter::SetExp(float AddExp)
 {
-    CurrentExp = FMath::Clamp(NewExp, 0.f, MaxExp);
+    CurrentExp = FMath::Clamp(CurrentExp + AddExp, 0.f, MaxExp);
 
     // 경험치바 UI 갱신
     if (CharacterWidget && CharacterWidget->ExpBar)

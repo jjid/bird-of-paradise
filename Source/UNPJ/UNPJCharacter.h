@@ -188,11 +188,11 @@ public:
     // ====== 스탯 설정 함수 ======
     /** 체력 설정 */
     UFUNCTION(BlueprintCallable, Category = "C_Function")			
-    void SetHP(float NewHP);
+    void SetHP(float AddHp);
 
     /** 경험치 설정 */
     UFUNCTION(BlueprintCallable, Category = "C_Function")
-    void SetExp(float NewExp);
+    void SetExp(float AddExp);
 
     /** 총알 개수 설정 후 UI 표시 */
     UFUNCTION(BlueprintCallable, Category = "C_Function")
