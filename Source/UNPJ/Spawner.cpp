@@ -27,17 +27,34 @@ void ASpawner::Tick(float DeltaTime)
 
 	time += DeltaTime;
 	int temp = round;
-	round = static_cast<int>(time)/5;
+	round = static_cast<int>(time)/60;
 
 	if (round != temp)
 	{
+		SpawnCycle *= 0.9;
+		
+	}
+
+	int temp2 = static_cast<int>(SpawnCycle) % static_cast<int>(time);
+	
+	if (temp2 == 0)
+	{
 		RandomFloat = FMath::FRandRange(1.f, 100.f);
-		if (RandomFloat < 50)
+		if (RandomFloat < 0)
 		{
 			SpawnEnemyAtPoint(0);
-		} else
+		}
+		else if (RandomFloat < 33)
 		{
 			SpawnEnemyAtPoint(1);
+		}
+		else if (RandomFloat < 66)
+		{
+			SpawnEnemyAtPoint(2);
+		}
+		else if (RandomFloat < 100)
+		{
+			SpawnEnemyAtPoint(3);
 		}
 		
 	}
@@ -61,6 +78,12 @@ void ASpawner::SpawnEnemyAtPoint(int tempInt)
 	} else if (tempInt == 1)
 	{
 		GetWorld()->SpawnActor<AActor>(EnemyBlueprintClass2, SpawnLocation, SpawnRotation);
+	} else if (tempInt == 2)
+	{
+		GetWorld()->SpawnActor<AActor>(EnemyBlueprintClass3, SpawnLocation, SpawnRotation);
+	} else if (tempInt == 3)
+	{
+		GetWorld()->SpawnActor<AActor>(EnemyBlueprintClass4, SpawnLocation, SpawnRotation);
 	} 
 	
 	

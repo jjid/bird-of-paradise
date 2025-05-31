@@ -27,6 +27,7 @@ public:
 
 	float time = 0.0f;
 	float round = 1;
+	float SpawnCycle = 0;
 	float RandomFloat = 0.0f;
 	
 	UPROPERTY(EditAnywhere, Category = "Spawn")
@@ -34,5 +35,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Spawn")
 	TSubclassOf<AActor> EnemyBlueprintClass2;
-	
+
+	UPROPERTY(EditAnywhere, Category = "Spawn")
+	TSubclassOf<AActor> EnemyBlueprintClass3;
+
+	UPROPERTY(EditAnywhere, Category = "Spawn")
+	TSubclassOf<AActor> EnemyBlueprintClass4;
 };
