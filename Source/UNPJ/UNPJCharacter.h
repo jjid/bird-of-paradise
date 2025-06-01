@@ -144,6 +144,17 @@ class AUNPJCharacter : public ACharacter
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
     int32 MaxGrenade = 2;
 
+    // 게임 매니저 역할!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // UI에 표시할 타이머
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
+    float TimerValue = 0.f;
+    // 한 라운드당 
+    // 타이머 핸들러
+    FTimerHandle UI_TimerHandle;
+    // UI에 표시할 라운드
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
+    int32 RoundValue = 1;
+    
 	/** 재장전 애니메이션 *///////////////////////////////////////////////////////
     float ReloadElapsed = 0.f;
     float ReloadDuration = 0.5f; // 재장전 시간

@@ -107,6 +107,18 @@ void AUNPJCharacter::BeginPlay()
                 FString GrenadeText = FString::Printf(TEXT("%d / %d"), CurrentGrenade, MaxGrenade);
                 CharacterWidget->GrenadeState->SetText(FText::FromString(GrenadeText));
             }
+            // 타이머 표시할 텍스트 UI에 매핑
+            if (CharacterWidget->TimerState)
+            {
+                FString TimerText = FString::Printf(TEXT("%.0f"), TimerValue); // 문자열 생성
+                CharacterWidget->TimerState->SetText(FText::FromString(TimerText)); // FText로 변환 후 설정
+            }
+            // 라운드 표시할 텍스트 UI에 매핑
+            if (CharacterWidget->RoundState)
+            {
+                FString RoundText = FString::Printf(TEXT("Round: %d"), RoundValue);
+                CharacterWidget->RoundState->SetText(FText::FromString(RoundText));
+            }
         }
     }
 }
@@ -115,7 +127,20 @@ void AUNPJCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-   
+    // 1초마다 타이머 1초 증가하며 업데이트 함수 호출
+    TimerValue += DeltaTime;
+    if (CharacterWidget && CharacterWidget->TimerState && CharacterWidget->RoundState )
+    {
+        CharacterWidget->TimerState->SetText(FText::FromString(FString::Printf(TEXT("%.0f"), TimerValue)));
+    }
+    if (FMath::FloorToInt(TimerValue / 5.f) > RoundValue) // 5초마다 라운드 증가
+    {
+        RoundValue = FMath::FloorToInt(TimerValue / 5.f); // 라운드 값 갱신
+        UE_LOG(LogTemp, Warning, TEXT("Round Value Updated: %d"), RoundValue);
+        FString RoundText = FString::Printf(TEXT("Round: %d"), RoundValue);
+        CharacterWidget->RoundState->SetText(FText::FromString(RoundText));
+  
+    }
 
     // Idle 상태에서 + 점프 중 총을 천천히 아래로 복귀
     if (CharacterState == ECharacterState::Idle || CharacterState == ECharacterState::Jumping)

@@ -47,4 +47,12 @@ public:
     // 수류탄 텍스트
     UPROPERTY(meta = (BindWidget))
     UTextBlock* GrenadeState;
+
+    // 시간초 타이머 텍스트
+    UPROPERTY(meta = (BindWidget))
+    UTextBlock* TimerState;
+
+    // 라운드 텍스트
+    UPROPERTY(meta = (BindWidget))
+    UTextBlock* RoundState;
 };
