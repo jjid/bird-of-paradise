@@ -6,6 +6,8 @@
 #include "Kismet/GameplayStatics.h" // 이펙트 스폰에 필요
 #include "DrawDebugHelpers.h"
 #include "Engine/OverlapResult.h"// 사발면 깃허브 코파일럿 멍청한 자식
+#include "EnemyCharacter.h" // 적 캐릭터 클래스 포함
+#include "UNPJCharacter.h" // 플레이어 캐릭터 클래스 포함
 
 AUNPJGrenade::AUNPJGrenade()
 {
@@ -51,7 +53,7 @@ void AUNPJGrenade::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AUNPJGrenade::Explode()
 {
-    UE_LOG(LogTemp, Warning, TEXT("수류탄 폭발!"));
+    //UE_LOG(LogTemp, Warning, TEXT("수류탄 폭발!"));
 
     // 파티클 생성
     if (GrenadeExplosionParticle)
@@ -65,7 +67,7 @@ void AUNPJGrenade::Explode()
         
     }
     // 폭발 범위 디버그(빨간색 원)
-    UE_LOG(LogTemp, Warning, TEXT("폭발 범위 : %f"), ExplosionRadius);
+    //UE_LOG(LogTemp, Warning, TEXT("폭발 범위 : %f"), ExplosionRadius);
     DrawDebugSphere(GetWorld(), GetActorLocation(), ExplosionRadius, 32, FColor::Red, false, 2.0f);
 
     // 폭발 범위 내 액터 감지
@@ -85,10 +87,17 @@ void AUNPJGrenade::Explode()
         for (auto& Result : Overlaps)
         {
             AActor* OtherActor = Result.GetActor();
-            if (OtherActor && OtherActor != this )
+            if (OtherActor && OtherActor != this && OtherActor->IsA(AEnemyCharacter::StaticClass() ) )
             {
                 // 여기서 데미지 적용 등 원하는 처리
-                UE_LOG(LogTemp, Warning, TEXT("폭발 대미지 받는 액터 : %s"), *OtherActor->GetName());
+                //UE_LOG(LogTemp, Warning, TEXT("폭발 대미지 받는 액터 : %s"), *OtherActor->GetName());
+                OtherActor->Destroy();
+
+               // 내 캐릭터의 경험치 증가 사발면 이거 왜 겟 오우너로는 안됨?
+                if ( OwnerCharacter && OwnerCharacter->IsA(AUNPJCharacter::StaticClass()) )
+                {
+                    OwnerCharacter->SetExp(10.f);
+                }
             }
         }
     }
@@ -101,7 +110,7 @@ void AUNPJGrenade::SetGrenadeSpeed(float AddSpeed)
 {
     GrenadeSpeed += AddSpeed; // 기존 속도에 AddSpeed 더하기
     GrenadeSpeed = FMath::Max(0.f, GrenadeSpeed); // 최소 0으로 제한
-    UE_LOG(LogTemp, Warning, TEXT("수류탄 속도 : %f"), GrenadeSpeed);
+    //UE_LOG(LogTemp, Warning, TEXT("수류탄 속도 : %f"), GrenadeSpeed);
     ProjectileMovement->InitialSpeed = GrenadeSpeed;
     ProjectileMovement->MaxSpeed = GrenadeSpeed;
 }
@@ -110,12 +119,12 @@ void AUNPJGrenade::SetExplosionRadius(float AddRadius)
 {
     ExplosionRadius += AddRadius; // 기존 반경에 AddRadius 더하기
     ExplosionRadius = FMath::Max(0.f, ExplosionRadius); // 최소 0으로 제한
-    UE_LOG(LogTemp, Warning, TEXT("수류탄 폭발 반경 : %f"), ExplosionRadius);
+    //UE_LOG(LogTemp, Warning, TEXT("수류탄 폭발 반경 : %f"), ExplosionRadius);
 }
 
 void AUNPJGrenade::SetGrenadeDelay(float AddDelay)
 {
     GrenadeDelay += AddDelay; // 기존 지연 시간에 AddDelay 더하기
     GrenadeDelay = FMath::Max(0.f, GrenadeDelay); // 최소 0으로 제한
-    UE_LOG(LogTemp, Warning, TEXT("수류탄 지연 시간 : %f"), GrenadeDelay);
+    //UE_LOG(LogTemp, Warning, TEXT("수류탄 지연 시간 : %f"), GrenadeDelay);
 }

@@ -136,6 +136,14 @@ class AUNPJCharacter : public ACharacter
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
     int32 MaxBullet = 6;
 
+    /** 현재 수류탄 개수 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
+    int32 CurrentGrenade = 2;
+
+    /** 최대 수류탄 개수 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
+    int32 MaxGrenade = 2;
+
 	/** 재장전 애니메이션 *///////////////////////////////////////////////////////
     float ReloadElapsed = 0.f;
     float ReloadDuration = 0.5f; // 재장전 시간
@@ -185,6 +193,8 @@ public:
     /** 1인칭 카메라 반환 */
     UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+
+    // 게임 진행중에 이벤트 발생시 스탯 변경하는 함수//////////////////////////////
     // ====== 스탯 설정 함수 ======
     /** 체력 설정 */
     UFUNCTION(BlueprintCallable, Category = "C_Function")			
@@ -198,7 +208,20 @@ public:
     UFUNCTION(BlueprintCallable, Category = "C_Function")
     void SetBullet(int32 NewBullet);
 
-    // 게임 진행중에 이벤트 발생시 스탯 변경하는 함수//////////////////////////////
+    /** 수류탄 개수 설정 후 UI 표시 */
+    UFUNCTION(BlueprintCallable, Category = "C_Function")
+    void SetGrenade(int32 AddGrenade)
+    {
+        int32 NewGrenade = CurrentGrenade + AddGrenade;
+        // 최소 수류탄 개수는 0개
+        CurrentGrenade = FMath::Max(0, NewGrenade);
+        if (CharacterWidget)
+        {
+             FString GrenadeText = FString::Printf(TEXT("%d / %d"), CurrentGrenade, MaxGrenade);
+             CharacterWidget->GrenadeState->SetText(FText::FromString(GrenadeText));
+        }
+    }
+
 	// 재장전 시간 설정 함수
     UFUNCTION(BlueprintCallable, Category = "C_Function")
     void SetReloadDuration(float AddDuration)

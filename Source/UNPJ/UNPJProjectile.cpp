@@ -38,7 +38,7 @@ void AUNPJProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && !( OtherActor->ActorHasTag("Player") ) ) // 내 캐릭터는 무시
 	{
 		Destroy(); // 일단 총알이 뭔가랑 부딪히기만 하면 총알 삭제
-		UE_LOG(LogTemp, Warning, TEXT("총알이랑 부딪힌 액터 이름 : %s"), *OtherActor->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("총알이랑 부딪힌 액터 이름 : %s"), *OtherActor->GetName());
 
 		// EnemyCharacter에 맞았는지 확인
         if (OtherActor->IsA(AEnemyCharacter::StaticClass()))
@@ -58,7 +58,7 @@ void AUNPJProjectile::SetBulletSpeed(float AddSpeed)
 {
 	// 총알 속도 변경
 	float NewSpeed = FMath::Clamp(BulletSpeed + AddSpeed, 0.f, 10000.f); // 최소 0, 최대 10000으로 제한
-	UE_LOG(LogTemp, Warning, TEXT("총알 속도 : %f"), NewSpeed);
+	//UE_LOG(LogTemp, Warning, TEXT("총알 속도 : %f"), NewSpeed);
 	
 	BulletSpeed = NewSpeed;
 	ProjectileMovement->InitialSpeed = BulletSpeed;

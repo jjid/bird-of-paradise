@@ -43,4 +43,8 @@ public:
     // 경험치 텍스트 ( 현재 경험치 / 최대 경험치 )
     UPROPERTY(meta = (BindWidget))
     UTextBlock* ExpState;
+
+    // 수류탄 텍스트
+    UPROPERTY(meta = (BindWidget))
+    UTextBlock* GrenadeState;
 };

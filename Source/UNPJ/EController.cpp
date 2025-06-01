@@ -8,6 +8,7 @@
 #include "AIController.h"            
 #include "GameFramework/PlayerController.h"
 #include "NavigationSystem.h" 
+#include "UNPJCharacter.h" // 플레이어 캐릭터 헤더
 
 
 
@@ -29,6 +30,7 @@ void AEController::BeginPlay()
 
         bIsMoving = true;
     }
+    PlayerCharacter = Cast<AUNPJCharacter>(PlayerPawn);
 }
 
 
@@ -57,7 +59,8 @@ void AEController::Tick(float DeltaSeconds)
             Enemy->PlayIdleAnimation();
             bIsMoving = false;
 
-            //UE_LOG(LogTemp, Warning, TEXT("🛑 멈춤 + Idle 전환: 거리 %.1f, 속도 %.1f"), Distance, Speed);
+            PlayerCharacter->SetHP(-10.f);
+            UE_LOG(LogTemp, Warning, TEXT("🛑 멈춤 + Idle 전환: 거리 %.1f, 속도 %.1f"), Distance, Speed);
         }
     }
     else if (!bIsCloseEnough)

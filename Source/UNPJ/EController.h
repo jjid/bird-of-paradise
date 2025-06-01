@@ -14,6 +14,8 @@ public:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaSeconds) override;
 
+    class AUNPJCharacter* PlayerCharacter = nullptr; // 플레이어 캐릭터
+
 protected:
     UPROPERTY(EditAnywhere, Category = "AI")
     float AcceptanceRadius = 200.f;

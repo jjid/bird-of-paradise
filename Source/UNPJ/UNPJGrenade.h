@@ -61,4 +61,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Projectile")
 	void SetGrenadeSpeed(float AddSpeed);
 
+	// 수류탄 던지는 캐릭터
+	class AUNPJCharacter* OwnerCharacter = nullptr;
+
 };

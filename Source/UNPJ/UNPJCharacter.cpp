@@ -101,6 +101,12 @@ void AUNPJCharacter::BeginPlay()
                 FString ExpText = FString::Printf(TEXT("%.0f / %.0f"), CurrentExp, MaxExp);
                 CharacterWidget->ExpState->SetText(FText::FromString(ExpText));
             }
+            // 수류탄 UI에 현재 수류탄 갯수 매핑
+            if (CharacterWidget->GrenadeState)
+            {
+                FString GrenadeText = FString::Printf(TEXT("%d / %d"), CurrentGrenade, MaxGrenade);
+                CharacterWidget->GrenadeState->SetText(FText::FromString(GrenadeText));
+            }
         }
     }
 }
@@ -108,6 +114,8 @@ void AUNPJCharacter::BeginPlay()
 void AUNPJCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
+   
 
     // Idle 상태에서 + 점프 중 총을 천천히 아래로 복귀
     if (CharacterState == ECharacterState::Idle || CharacterState == ECharacterState::Jumping)
@@ -141,23 +149,18 @@ void AUNPJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AUNPJCharacter::Move);
-
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AUNPJCharacter::Look);
-
 		// 총 쏘기
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &AUNPJCharacter::Fire);
-
         // 재장전
         EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &AUNPJCharacter::Reload);
         // 수류탄 투척
         EnhancedInputComponent->BindAction(GrenadeAction, ETriggerEvent::Started, this, &AUNPJCharacter::ThrowGrenade);
 	}
 }
-
 
 void AUNPJCharacter::Move(const FInputActionValue& Value)
 {
@@ -191,7 +194,7 @@ void AUNPJCharacter::Fire()
     if (CharacterState != ECharacterState::Idle) return;
     if (CurrentBullet <= 0)
     {
-        UE_LOG(LogTemp, Warning, TEXT("총알이 없습니다. 재장전 합니다"));
+        //UE_LOG(LogTemp, Warning, TEXT("총알이 없습니다. 재장전 합니다"));
         Reload();
         return;
     }
@@ -276,9 +279,10 @@ void AUNPJCharacter::Fire()
 
 void AUNPJCharacter::ThrowGrenade()
 {
-    if (CharacterState != ECharacterState::Idle) return;
-    UE_LOG(LogTemp, Warning, TEXT("수류탄 투척!"));
+    if (CharacterState != ECharacterState::Idle || CurrentGrenade <= 0 ) return;
+    //UE_LOG(LogTemp, Warning, TEXT("수류탄 투척!"));
 
+    SetGrenade( -1 ); // 수류탄 갯수 감소
     //수류탄 액터 스폰
     if (GrenadeClass)
     {
@@ -291,6 +295,7 @@ void AUNPJCharacter::ThrowGrenade()
             MuzzleLocation,
             MuzzleRotation
         );
+        Grenade->OwnerCharacter = this; // 수류탄의 소유자를 현재 캐릭터로 설정
     }
 }
 
@@ -347,7 +352,7 @@ void AUNPJCharacter::Reload()
 
     GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &AUNPJCharacter::ReloadInterpStep, 0.01f, true);
 
-    UE_LOG(LogTemp, Warning, TEXT("재장전"));
+    //UE_LOG(LogTemp, Warning, TEXT("재장전"));
 }
 
 void AUNPJCharacter::ReloadInterpStep()
@@ -364,7 +369,7 @@ void AUNPJCharacter::ReloadInterpStep()
     if (Alpha >= 1.f)
     {
         GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
-        UE_LOG(LogTemp, Warning, TEXT("재장전 완료"));
+        //UE_LOG(LogTemp, Warning, TEXT("재장전 완료"));
         SetBullet(CurrentBullet + MaxBullet);
         CharacterState = ECharacterState::Idle;
     }
@@ -399,7 +404,7 @@ void AUNPJCharacter::ReturnGunToIdle(float DeltaTime)
 void AUNPJCharacter::Jump()
 {
     Super::Jump();
-    UE_LOG(LogTemp, Warning, TEXT("점프 시작!"));
+    //UE_LOG(LogTemp, Warning, TEXT("점프 시작!"));
     // 경험지 감소
     SetExp(CurrentExp - 10.f);
     // 체력 증가
@@ -410,7 +415,7 @@ void AUNPJCharacter::Jump()
 void AUNPJCharacter::Landed(const FHitResult& Hit)
 {
     Super::Landed(Hit);
-    UE_LOG(LogTemp, Warning, TEXT("착지!"));
+    //UE_LOG(LogTemp, Warning, TEXT("착지!"));
     CharacterState = ECharacterState::Idle;
 }
 
