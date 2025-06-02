@@ -44,10 +44,6 @@ public:
     UPROPERTY(meta = (BindWidget))
     UTextBlock* ExpState;
 
-    // 수류탄 텍스트
-    UPROPERTY(meta = (BindWidget))
-    UTextBlock* GrenadeState;
-
     // 시간초 타이머 텍스트
     UPROPERTY(meta = (BindWidget))
     UTextBlock* TimerState;
@@ -55,4 +51,12 @@ public:
     // 라운드 텍스트
     UPROPERTY(meta = (BindWidget))
     UTextBlock* RoundState;
+
+    // 수류탄 스킬 마스크 프로그래스바
+    UPROPERTY(meta = (BindWidget))
+    UProgressBar* GrenadeSkillMask;
+
+    // 대쉬 스킬 마스크 프로그래스바
+    UPROPERTY(meta = (BindWidget))
+    UProgressBar* DashSkillMask;
 };

@@ -1,5 +1,37 @@
 [
 	{
+		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\AbilityItemWidget.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\AbilityItemWidget.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\AbilitySelectWidget.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\AbilitySelectWidget.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
 		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\CharacterWidget.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
@@ -9,6 +41,22 @@
 	},
 	{
 		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\CharacterWidget.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\DeadWidget.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\DeadWidget.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
 			"@C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
