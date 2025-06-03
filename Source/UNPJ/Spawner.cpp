@@ -11,53 +11,67 @@ ASpawner::ASpawner()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	
 }
 
 // Called when the game starts or when spawned
 void ASpawner::BeginPlay()
 {
 	Super::BeginPlay();
+	randomSpawnCycle = FMath::RandRange(MinSpawnCycle[round / 5], MaxSpawnCycle[round / 5]);
 }
 
 // Called every frame
 void ASpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 	time += DeltaTime;
-	int temp = round;
-	round = static_cast<int>(time)/60;
 
-	if (round != temp)
+	if (time > 60)
 	{
-		SpawnCycle *= 0.9;
-		
+		round++;
+		time = 0;
 	}
-
-	int temp2 = static_cast<int>(SpawnCycle) % static_cast<int>(time);
 	
-	if (temp2 == 0)
+	if (round > 29)
 	{
-		RandomFloat = FMath::FRandRange(1.f, 100.f);
-		if (RandomFloat < 0)
-		{
-			SpawnEnemyAtPoint(0);
-		}
-		else if (RandomFloat < 33)
-		{
-			SpawnEnemyAtPoint(1);
-		}
-		else if (RandomFloat < 66)
-		{
-			SpawnEnemyAtPoint(2);
-		}
-		else if (RandomFloat < 100)
-		{
-			SpawnEnemyAtPoint(3);
-		}
-		
+		round = 30;
 	}
+	
+	spawnTime += DeltaTime;
+
+	if (spawnTime > randomSpawnCycle)
+	{
+		randomSpawnCycle = FMath::RandRange(MinSpawnCycle[round / 5], MaxSpawnCycle[round / 5]);
+		SpawnCheck = true;
+		spawnTime = 0;
+	}
+	
+	if ((round+1) % 5 != 0)
+	{
+		if (SpawnCheck)
+		{
+			RandomFloat = FMath::FRandRange(1.f, 100.f);
+			if (RandomFloat < 0)
+			{
+				SpawnEnemyAtPoint(0);
+			}
+			else if (RandomFloat < 33)
+			{
+				SpawnEnemyAtPoint(1);
+			}
+			else if (RandomFloat < 66)
+			{
+				SpawnEnemyAtPoint(2);
+			}
+			else if (RandomFloat < 100)
+			{
+				SpawnEnemyAtPoint(3);
+			}
+			SpawnTumbleweedAbovePlayer();
+			SpawnCheck = false;
+		}
+	} 
 }
 
 void ASpawner::SpawnEnemyAtPoint(int tempInt)
@@ -85,11 +99,7 @@ void ASpawner::SpawnEnemyAtPoint(int tempInt)
 	{
 		GetWorld()->SpawnActor<AActor>(EnemyBlueprintClass4, SpawnLocation, SpawnRotation);
 	} 
-	
-	
 }
-
-
 
 void ASpawner::SpawnTumbleweedAbovePlayer()
 {
