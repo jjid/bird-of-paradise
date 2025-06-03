@@ -306,16 +306,16 @@ void AUNPJCharacter::Fire()
             TargetPoint = HitResult.ImpactPoint;
 
             // 라인 트레이스 히트 지점에 하얀색 원 디버그 그리기
-            DrawDebugSphere(GetWorld(), TargetPoint, 16.f, 16, FColor::White, false, 2.0f);
+            //DrawDebugSphere(GetWorld(), TargetPoint, 16.f, 16, FColor::White, false, 2.0f);
 
             // 총구(FireLocation)에서 히트 지점까지 빨간색 선 디버그 그리기
-            DrawDebugLine(GetWorld(), FireLocation->GetComponentLocation(), TargetPoint, FColor::Red, false, 2.0f, 0, 2.0f);
+            //DrawDebugLine(GetWorld(), FireLocation->GetComponentLocation(), TargetPoint, FColor::Red, false, 2.0f, 0, 2.0f);
         }
         else
         {
             // 트레이스 미히트 시 끝점에 하얀색 원, 경로 빨간색 선
-            DrawDebugSphere(GetWorld(), TraceEnd, 16.f, 16, FColor::White, false, 2.0f);
-            DrawDebugLine(GetWorld(), CameraLocation, TraceEnd, FColor::Red, false, 2.0f, 0, 2.0f);
+            //DrawDebugSphere(GetWorld(), TraceEnd, 16.f, 16, FColor::White, false, 2.0f);
+            //DrawDebugLine(GetWorld(), CameraLocation, TraceEnd, FColor::Red, false, 2.0f, 0, 2.0f);
         }
 
         // 2. 총구에서 목표점(TargetPoint) 방향으로 회전값 계산
