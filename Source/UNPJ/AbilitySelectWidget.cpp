@@ -2,7 +2,7 @@
 
 
 #include "AbilitySelectWidget.h"
-#include "Components/HorizontalBox.h"
+#include "Components/SizeBox.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "UNPJ/AbilitySelectWidget.h"
@@ -33,13 +33,13 @@ void UAbilitySelectWidget::CreateAbilitySelectWidgets()
                 switch (i)
                 {
                 case 0:
-                    SelectBox_0->AddChildToHorizontalBox(AbilityWidget);
+                    SelectBox_0->AddChild(AbilityWidget); // SizeBox에 맞게 AddChild 사용
                     break;
                 case 1:
-                    SelectBox_1->AddChildToHorizontalBox(AbilityWidget);
+                    SelectBox_1->AddChild(AbilityWidget);
                     break;
                 case 2:
-                    SelectBox_2->AddChildToHorizontalBox(AbilityWidget);
+                    SelectBox_2->AddChild(AbilityWidget);
                     break;
                 }
             }
