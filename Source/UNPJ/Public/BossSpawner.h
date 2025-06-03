@@ -4,36 +4,29 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Spawner.generated.h"
+#include "BossSpawner.generated.h"
 
 UCLASS()
-class UNPJ_API ASpawner : public AActor
+class UNPJ_API ABossSpawner : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ASpawner();
+	ABossSpawner();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
 	void SpawnEnemyAtPoint(int tempInt);
-	void SpawnTumbleweedAbovePlayer();
-
-	float time = 0.0f;
-	float spawnTime = 0.0f;
-	int round = 0;
-	int MaxSpawnCycle[7] = {20, 15, 14, 13, 11, 9, 6};
-	int MinSpawnCycle[7] = {15, 13, 12, 10, 8, 7, 4};
-	int randomSpawnCycle = 0;
-
-	bool SpawnCheck = false;
 	
+	int round = 0;
+	float time = 0.0f;
+	bool SpawnCheck = false;
 	float RandomFloat = 0.0f;
 	
 	UPROPERTY(EditAnywhere, Category = "Spawn")
@@ -47,4 +40,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Spawn")
 	TSubclassOf<AActor> EnemyBlueprintClass4;
+
+	UPROPERTY(EditAnywhere, Category = "Spawn")
+	TSubclassOf<AActor> EnemyBlueprintClass5;
+
+	UPROPERTY(EditAnywhere, Category = "Spawn")
+	TSubclassOf<AActor> EnemyBlueprintClass6;
 };

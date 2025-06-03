@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Spawner.h"
 #include "EngineUtils.h"
+#include "Spawner.h"
 #include "Engine/StaticMeshActor.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/TargetPoint.h"
@@ -11,36 +11,66 @@ ASpawner::ASpawner()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	
 }
 
 // Called when the game starts or when spawned
 void ASpawner::BeginPlay()
 {
 	Super::BeginPlay();
+	randomSpawnCycle = FMath::RandRange(MinSpawnCycle[round / 5], MaxSpawnCycle[round / 5]);
 }
 
 // Called every frame
 void ASpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 	time += DeltaTime;
-	int temp = round;
-	round = static_cast<int>(time)/5;
 
-	if (round != temp)
+	if (time > 60)
 	{
-		RandomFloat = FMath::FRandRange(1.f, 100.f);
-		if (RandomFloat < 50)
-		{
-			SpawnEnemyAtPoint(0);
-		} else
-		{
-			SpawnEnemyAtPoint(1);
-		}
-		
+		round++;
+		time = 0;
 	}
+	
+	if (round > 29)
+	{
+		round = 30;
+	}
+	
+	spawnTime += DeltaTime;
+
+	if (spawnTime > randomSpawnCycle)
+	{
+		randomSpawnCycle = FMath::RandRange(MinSpawnCycle[round / 5], MaxSpawnCycle[round / 5]);
+		SpawnCheck = true;
+		spawnTime = 0;
+	}
+	
+	if ((round+1) % 5 != 0)
+	{
+		if (SpawnCheck)
+		{
+			RandomFloat = FMath::FRandRange(1.f, 100.f);
+			if (RandomFloat < 0)
+			{
+				SpawnEnemyAtPoint(0);
+			}
+			else if (RandomFloat < 33)
+			{
+				SpawnEnemyAtPoint(1);
+			}
+			else if (RandomFloat < 66)
+			{
+				SpawnEnemyAtPoint(2);
+			}
+			else if (RandomFloat < 100)
+			{
+				SpawnEnemyAtPoint(3);
+			}
+			SpawnCheck = false;
+		}
+	} 
 }
 
 void ASpawner::SpawnEnemyAtPoint(int tempInt)
@@ -61,12 +91,14 @@ void ASpawner::SpawnEnemyAtPoint(int tempInt)
 	} else if (tempInt == 1)
 	{
 		GetWorld()->SpawnActor<AActor>(EnemyBlueprintClass2, SpawnLocation, SpawnRotation);
+	} else if (tempInt == 2)
+	{
+		GetWorld()->SpawnActor<AActor>(EnemyBlueprintClass3, SpawnLocation, SpawnRotation);
+	} else if (tempInt == 3)
+	{
+		GetWorld()->SpawnActor<AActor>(EnemyBlueprintClass4, SpawnLocation, SpawnRotation);
 	} 
-	
-	
 }
-
-
 
 void ASpawner::SpawnTumbleweedAbovePlayer()
 {
