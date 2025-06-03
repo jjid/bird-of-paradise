@@ -10,10 +10,7 @@
     <list default="true" id="608f44f5-ff6a-4703-8fc5-ef8ee53a6f5f" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.UNPJ.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.UNPJ.dir/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/JunHyuk/JH_Test_Map.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/JunHyuk/JH_Test_Map.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/JunHyuk/WBP/AbilityItem_WBP/WBP_DecreaseFireRate.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/JunHyuk/WBP/AbilityItem_WBP/WBP_DecreaseFireRate.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/JunHyuk/WBP/WBP_Character.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/JunHyuk/WBP/WBP_Character.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/UNPJ/MyGameMode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/UNPJ/MyGameMode.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/UNPJ/MyGameMode.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/UNPJ/MyGameMode.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
