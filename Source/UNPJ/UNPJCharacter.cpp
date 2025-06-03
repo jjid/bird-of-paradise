@@ -249,8 +249,8 @@ void AUNPJCharacter::Look(const FInputActionValue& Value)
 
 void AUNPJCharacter::Fire()
 {
-
-    if (CharacterState != ECharacterState::Idle) return;
+    // 평상시나 점프 중에서도 총 발사 가능
+    if (CharacterState != ECharacterState::Idle && CharacterState != ECharacterState::Jumping) return;
     if (CurrentBullet <= 0)
     {
         //UE_LOG(LogTemp, Warning, TEXT("총알이 없습니다. 재장전 합니다"));
@@ -537,7 +537,7 @@ void AUNPJCharacter::SetBullet(int32 NewBullet)
 
 void AUNPJCharacter::Reload()
 {
-    if( CharacterState != ECharacterState::Idle ) return;
+    if( CharacterState != ECharacterState::Idle && CharacterState != ECharacterState::Jumping ) return;
     if (CurrentBullet >= MaxBullet) return;
 
     // 총을 항상 초기 위치(GunIdleRot)로 복구 후 애니메이션 시작
@@ -583,7 +583,15 @@ void AUNPJCharacter::ReloadInterpStep()
         GetWorld()->GetTimerManager().ClearTimer(ReloadTimerHandle);
         //UE_LOG(LogTemp, Warning, TEXT("재장전 완료"));
         SetBullet(CurrentBullet + MaxBullet);
-        CharacterState = ECharacterState::Idle;
+        // 낙하 중이면 점핑 상태, 아니면 Idle
+        if (GetCharacterMovement() && GetCharacterMovement()->IsFalling())
+        {
+            CharacterState = ECharacterState::Jumping;
+        }
+        else
+        {
+            CharacterState = ECharacterState::Idle;
+        }
     }
 }
 
@@ -599,7 +607,15 @@ void AUNPJCharacter::FireInterpStep()
     if (FireElapsed >= FireDuration)
     {
         GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
-        CharacterState = ECharacterState::Idle;
+        // 낙하 중이면 점핑 상태, 아니면 Idle
+        if (GetCharacterMovement() && GetCharacterMovement()->IsFalling())
+        {
+            CharacterState = ECharacterState::Jumping;
+        }
+        else
+        {
+            CharacterState = ECharacterState::Idle;
+        }
         // Tick에서 ReturnGunToIdle로 복귀
     }
 }
@@ -618,9 +634,9 @@ void AUNPJCharacter::Jump()
     Super::Jump();
     //UE_LOG(LogTemp, Warning, TEXT("점프 시작!"));
     // 경험지 감소
-    SetExp(CurrentExp - 10.f);
+    //SetExp(CurrentExp - 10.f);
     // 체력 증가
-    SetHP(CurrentHP + 10.f);
+    //SetHP(CurrentHP + 10.f);
     CharacterState = ECharacterState::Jumping;
 }
 

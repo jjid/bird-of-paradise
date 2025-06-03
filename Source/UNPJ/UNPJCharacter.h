@@ -369,6 +369,12 @@ public:
             GetCharacterMovement()->MaxWalkSpeed += 30;
         }
     }
+    // 총 쏘는 속도 증가 함수 7
+    UFUNCTION(BlueprintCallable, Category = "C_Function")
+    void DecreaseFireRate(float AddRate)
+    {
+        FireDuration = FMath::Max(0.1f, FireDuration + AddRate); // 최소 발사 시간은 0.1초
+    }
 
     // 마지막으로 버튼 클릭으로 능력치 선택시 어빌리티 위젯 지우는 함수
     UFUNCTION(BlueprintCallable, Category = "C_Function")
