@@ -27,7 +27,7 @@ public:
 
 	float time = 0.0f;
 	float spawnTime = 0.0f;
-	int round = 33;
+	int round = 0;
 	int MaxSpawnCycle[7] = {20, 15, 14, 13, 11, 9, 6};
 	int MinSpawnCycle[7] = {15, 13, 12, 10, 8, 7, 4};
 	int randomSpawnCycle = 0;

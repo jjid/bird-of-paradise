@@ -68,7 +68,6 @@ void ASpawner::Tick(float DeltaTime)
 			{
 				SpawnEnemyAtPoint(3);
 			}
-			SpawnTumbleweedAbovePlayer();
 			SpawnCheck = false;
 		}
 	} 

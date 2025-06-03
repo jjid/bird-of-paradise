@@ -24,7 +24,7 @@ public:
 
 	void SpawnEnemyAtPoint(int tempInt);
 	
-	int round = 33;
+	int round = 0;
 	float time = 0.0f;
 	bool SpawnCheck = false;
 	float RandomFloat = 0.0f;
