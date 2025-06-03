@@ -36,7 +36,15 @@ void AEnemyCharacter::PlayThrowAnimation()
 {
     if (ThrowAnimation && CurrentAnim != ThrowAnimation)
     {
-        GetMesh()->PlayAnimation(ThrowAnimation, false); // false = 1회 재생
-        CurrentAnim = nullptr; // 던지고 나면 다시 Idle 체크할 수 있도록 초기화
+        GetMesh()->PlayAnimation(ThrowAnimation, false);
+        CurrentAnim = nullptr;
+    }
+}
+void AEnemyCharacter::PlaySmashAttackAnimation()
+{
+    if (SmashAttackAnimation && CurrentAnim != SmashAttackAnimation)
+    {
+        GetMesh()->PlayAnimation(SmashAttackAnimation, false); // 한 번만 재생
+        CurrentAnim = nullptr; // 공격 후 Idle 등으로 돌아갈 수 있도록 초기화
     }
 }

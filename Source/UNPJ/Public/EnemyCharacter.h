@@ -14,9 +14,10 @@ public:
 
     virtual void Tick(float DeltaTime) override;
 
-    void PlayWalkAnimation();     // 걷는 애니메이션 재생
-    void PlayIdleAnimation();     // 도착 애니메이션 재생
-    void PlayThrowAnimation();    // 던지는 애니메이션 재생
+    void PlayWalkAnimation();         // 걷는 애니메이션
+    void PlayIdleAnimation();         // 대기 애니메이션
+    void PlayThrowAnimation();        // 투척 애니메이션
+    void PlaySmashAttackAnimation();  // 순간이동 공격 애니메이션
 
 protected:
     UPROPERTY(EditAnywhere, Category = "Animation")
@@ -27,6 +28,9 @@ protected:
 
     UPROPERTY(EditAnywhere, Category = "Animation")
     UAnimationAsset* ThrowAnimation;
+
+    UPROPERTY(EditAnywhere, Category = "Animation")
+    UAnimationAsset* SmashAttackAnimation;
 
 private:
     UAnimationAsset* CurrentAnim = nullptr;
