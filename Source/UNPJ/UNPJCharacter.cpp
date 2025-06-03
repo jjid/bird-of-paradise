@@ -269,15 +269,18 @@ void AUNPJCharacter::Fire()
     //SetReloadDuration(3.f);
     // 수류탄 범위 감소
     //SetGrenadeRadius(-100.f);
-
-    CharacterState = ECharacterState::Firing;
-    SetBullet(CurrentBullet - 1);
+ 
+    CharacterState = ECharacterState::Firing; // 총 쏘는 상태로 변경
+    SetBullet(CurrentBullet - 1); // 총알 하나 감소
 
     // 총을 항상 초기 위치(GunIdleRot)로 복구 후 애니메이션 시작
     SM_Gun->SetRelativeRotation(GunIdleRot);
     // 총쏘기 애니메이션 시작
     FireElapsed = 0.f;
     GetWorld()->GetTimerManager().SetTimer(FireTimerHandle, this, &AUNPJCharacter::FireInterpStep, 0.01f, true);
+
+    // 사운드 생성
+    if (FireSound) UGameplayStatics::PlaySoundAtLocation(this, FireSound, FireLocation->GetComponentLocation());
 
     // 이펙트 생성
     if (FireEffect)
@@ -341,7 +344,10 @@ void AUNPJCharacter::ThrowGrenade()
     if (CharacterState != ECharacterState::Idle || !bCanThrowGrenade) return; // 쿨타임 중이면 실행 불가
 
     bCanThrowGrenade = false; // 수류탄 던질 수 없도록 설정
-    UE_LOG(LogTemp, Warning, TEXT("수류탄 투척!"));
+    //UE_LOG(LogTemp, Warning, TEXT("수류탄 투척!"));
+
+    // 사운드 재생
+    if (SkillSound) UGameplayStatics::PlaySoundAtLocation(this, SkillSound, GrenadeLocation->GetComponentLocation());
 
     // 수류탄 액터 스폰
     if (GrenadeClass)
@@ -454,6 +460,9 @@ void AUNPJCharacter::SetHP(float AddHP)
     // 만약 체력이 0 이하가 되면 캐릭터를 죽음 상태로 설정
     if (CurrentHP <= 0.f)
     {
+        // 사운드 재생
+        if (DeadSound) UGameplayStatics::PlaySoundAtLocation(this, DeadSound, GetActorLocation());
+
         // 캐릭터 죽음 처리
         CharacterState = ECharacterState::Dead;
         // DeadWidget 표시
@@ -492,6 +501,9 @@ void AUNPJCharacter::SetExp(float AddExp)
     // 경험치가 최대치에 도달하면 레벨업 처리
     if (CurrentExp >= MaxExp)
     {
+        // 사운드 재생
+        if (LevelUpSound) UGameplayStatics::PlaySoundAtLocation(this, LevelUpSound, GetActorLocation());
+
         // 레벨업 처리 (예: 최대 경험치 증가, 현재 경험치 초기화 등)
         CurrentExp = 0.f; // 경험치 초기화
         MaxExp += LevelUpExpIncrease; // 최대 경험치 증가
@@ -504,7 +516,7 @@ void AUNPJCharacter::SetExp(float AddExp)
         SetHP( CurrentHP ); // UI 갱신을 위해 SetHP 호출
 
         // 레벨업 메시지 출력
-        UE_LOG(LogTemp, Warning, TEXT("레벨업! 새로운 최대 경험치: %.0f"), MaxExp);
+        //UE_LOG(LogTemp, Warning, TEXT("레벨업! 새로운 최대 경험치: %.0f"), MaxExp);
 
         // 어빌리티 셀렉트 위젯 표시
         if (AbilitySelectWidget)
@@ -539,11 +551,14 @@ void AUNPJCharacter::Reload()
 {
     if( CharacterState != ECharacterState::Idle && CharacterState != ECharacterState::Jumping ) return;
     if (CurrentBullet >= MaxBullet) return;
+ 
+    // 사운드 재생
+    if (ReloadSound) UGameplayStatics::PlaySoundAtLocation(this, ReloadSound, GetActorLocation());
 
     // 총을 항상 초기 위치(GunIdleRot)로 복구 후 애니메이션 시작
     SM_Gun->SetRelativeRotation(GunIdleRot);
 
-    CharacterState = ECharacterState::Reloading;
+    CharacterState = ECharacterState::Reloading; // 재장전 상태로 변경
     ReloadElapsed = 0.f;
 
     GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &AUNPJCharacter::ReloadInterpStep, 0.01f, true);

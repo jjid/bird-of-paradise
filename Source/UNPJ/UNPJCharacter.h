@@ -219,7 +219,7 @@ class AUNPJCharacter : public ACharacter
         CharacterState = ECharacterState::Idle;
     }
 
-    // 게임 매니저 역할!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // 게임 매니저 역할!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // UI에 표시할 타이머
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "C_Stat", meta = (AllowPrivateAccess = "true"))
     float TimerValue = 0.f;
@@ -238,7 +238,7 @@ class AUNPJCharacter : public ACharacter
         CharacterWidget->RoundState->SetText(FText::FromString(RoundText));
     }
     
-	/** 재장전 애니메이션 *///////////////////////////////////////////////////////
+	/** 재장전 애니메이션 *///////////////////////////////////////////////////////////////////////////////////////
     float ReloadElapsed = 0.f;
     float ReloadDuration = 0.5f; // 재장전 시간
     FTimerHandle ReloadTimerHandle;
@@ -290,6 +290,19 @@ public:
     /** 1인칭 카메라 반환 */
     UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+    // 사운드 관련!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "C_Sound")
+    USoundBase* FireSound;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "C_Sound")
+    USoundBase* DeadSound;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "C_Sound")
+    USoundBase* LevelUpSound;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "C_Sound")
+    USoundBase* SkillSound;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "C_Sound")
+    USoundBase* DashSound;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "C_Sound")
+    USoundBase* ReloadSound;
 
     // 게임 진행중에 이벤트 발생시 스탯 변경하는 함수//////////////////////////////
     // ====== 스탯 설정 함수 ======
