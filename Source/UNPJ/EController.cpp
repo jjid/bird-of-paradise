@@ -24,7 +24,7 @@ void AEController::BeginPlay()
         AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(GetPawn());
         if (Enemy)
         {
-            Enemy->PlayWalkAnimation();  // ✅ 최초 걷기 애니 시작
+            Enemy->PlayWalkAnimation();
         }
 
         bIsMoving = true;
