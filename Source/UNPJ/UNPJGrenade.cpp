@@ -68,7 +68,7 @@ void AUNPJGrenade::Explode()
     }
     // 폭발 범위 디버그(빨간색 원)
     //UE_LOG(LogTemp, Warning, TEXT("폭발 범위 : %f"), ExplosionRadius);
-    DrawDebugSphere(GetWorld(), GetActorLocation(), ExplosionRadius, 32, FColor::Red, false, 2.0f);
+    //DrawDebugSphere(GetWorld(), GetActorLocation(), ExplosionRadius, 32, FColor::Red, false, 2.0f);
 
     // 폭발 범위 내 액터 감지
     TArray<FOverlapResult> Overlaps; // "Engine/OverlapResult.h" 이거 넣어줘야함. 코파일럿 이거 모름

@@ -42,7 +42,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
 	float GrenadeSpeed = 1200.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
-	float GrenadeDelay = 3.0f; // 수류탄은 3초 후에 삭제됨
+	float GrenadeDelay = 1.5f; // 수류탄은 3초 후에 삭제됨
 
 
 	// 수류탄 폭발 범위
