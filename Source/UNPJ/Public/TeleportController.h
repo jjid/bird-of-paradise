@@ -13,6 +13,8 @@ public:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaSeconds) override;
 
+    class AUNPJCharacter* PlayerCharacter = nullptr; // JH_í”Œë ˆì´ì–´ ìºë¦­í„° 
+
 protected:
     UPROPERTY(EditAnywhere, Category = "AI")
     float AcceptanceRadius = 1200.f;
@@ -24,7 +26,7 @@ protected:
     float JumpAttackCooldown = 3.0f;
 
     UPROPERTY(EditAnywhere, Category = "AI")
-    float JumpArc = 0.5f; // Æ÷¹°¼± °î·ü (0.0 = Á÷¼±, 1.0 = ³ôÀÌ Á¡ÇÁ)
+    float JumpArc = 0.5f; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (0.0 = ï¿½ï¿½ï¿½ï¿½, 1.0 = ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 
 private:
     UPROPERTY()
@@ -36,4 +38,10 @@ private:
     FTimerHandle JumpAttackCooldownHandle;
 
     void PerformJumpAttack();
+
+    bool bJumpAttackDamage = false;
+
+    UFUNCTION()
+    void OnJumpAttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };

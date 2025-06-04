@@ -96,6 +96,22 @@
 		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
 	},
 	{
+		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\Private\\BossSpawner.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\Private\\BurrowController.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
 		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\Private\\DaggerThrow.cpp",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
@@ -136,6 +152,30 @@
 		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
 	},
 	{
+		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\Private\\TeleportController.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\Public\\BossSpawner.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\Public\\BurrowController.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
 		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\Public\\DaggerThrow.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
@@ -169,6 +209,14 @@
 	},
 	{
 		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\Public\\REControll.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.5\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\Source\\UNPJ\\Public\\TeleportController.h",
 		"arguments": [
 			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe",
 			"@C:\\Users\\YJH\\Documents\\GitHub\\bird-of-paradise\\.vscode\\compileCommands_Default\\UNPJ.1.rsp"

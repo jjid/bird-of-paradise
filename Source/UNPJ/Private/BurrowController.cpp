@@ -3,11 +3,26 @@
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.h"
 #include "TimerManager.h"
+#include "UNPJ/UNPJCharacter.h"
+#include "Components/CapsuleComponent.h"
 
 void ABurrowController::BeginPlay()
 {
     Super::BeginPlay();
     PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+    PlayerCharacter = Cast<AUNPJCharacter>(PlayerPawn); // JH_ ìºë¦­í„° ê°€ì ¸ì˜¤ê¸°
+
+    // ì˜¤ë²„ë© ë¸ë¦¬ê²Œì´íŠ¸ ë°”ì¸ë”©
+    ACharacter* EnemyChar = Cast<ACharacter>(GetPawn());
+    if (EnemyChar)
+    {
+        UCapsuleComponent* Capsule = EnemyChar->GetCapsuleComponent();
+        if (Capsule)
+        {
+            Capsule->OnComponentBeginOverlap.AddUniqueDynamic(this, &ABurrowController::OnAmbushOverlap);
+        }
+    }
 }
 
 void ABurrowController::Tick(float DeltaSeconds)
@@ -24,7 +39,7 @@ void ABurrowController::Tick(float DeltaSeconds)
     if (bIsBurrowed || bIsInCooldown)
         return;
 
-    // ÇÃ·¹ÀÌ¾î°¡ »ç°Å¸® ³»¿¡ ÀÖÀ½
+    // ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½Å¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     if (Distance <= AttackRange)
     {
         StopMovement();
@@ -33,7 +48,7 @@ void ABurrowController::Tick(float DeltaSeconds)
         return;
     }
 
-    // Æò»ó½Ã ÃßÀû
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     if (!bIsMoving || Distance > AcceptanceRadius)
     {
         MoveToActor(PlayerPawn, AcceptanceRadius - 50, true, true, true, nullptr, false);
@@ -85,6 +100,8 @@ void ABurrowController::ExecuteAmbush()
     EnemyChar->SetActorHiddenInGame(false);
     EnemyChar->SetActorEnableCollision(true);
 
+    bBurrowAttackDamage = false;
+
     AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(EnemyChar);
     if (Enemy)
     {
@@ -98,6 +115,21 @@ void ABurrowController::ExecuteAmbush()
     GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, [this]()
         {
             bIsInCooldown = false;
-            UE_LOG(LogTemp, Warning, TEXT("ÄğÅ¸ÀÓ ³¡"));
+            UE_LOG(LogTemp, Warning, TEXT("ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½"));
         }, AttackCooldown, false);
+}
+
+// ì˜¤ë²„ë© ì½œë°±
+void ABurrowController::OnAmbushOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    if (!bBurrowAttackDamage && OtherActor == PlayerPawn)
+    {
+        bBurrowAttackDamage = true;
+        if (PlayerCharacter)
+        {
+            PlayerCharacter->SetHP(-20.f); // 
+        }
+        //UE_LOG(LogTemp, Warning, TEXT("ë•…ì—ì„œ ì˜¬ë¼ì˜¤ëŠ” ë™ì•ˆ ì˜¤ë²„ë©! ëŒ€ë¯¸ì§€ 1íšŒ ì ìš©"));
+    }
 }

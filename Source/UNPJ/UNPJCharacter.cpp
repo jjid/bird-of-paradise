@@ -383,6 +383,11 @@ void AUNPJCharacter::Dash()
 {
     if ((CharacterState != ECharacterState::Idle && CharacterState != ECharacterState::Jumping) || !bCanDash) return;
 
+    if( DashSound ) 
+    {
+        UGameplayStatics::PlaySoundAtLocation(this, DashSound, GetActorLocation());
+    }
+ 
     bCanDash = false;
 
     FVector ForwardDirection = GetActorForwardVector();
@@ -449,6 +454,11 @@ void AUNPJCharacter::SetHP(float AddHP)
 {
     CurrentHP = FMath::Clamp(CurrentHP + AddHP, 0.f, MaxHP);
 
+    if( AddHP < 0.f ) // 체력 감소시 온힛 사운드 재생
+    {
+        if (OnHitSound) UGameplayStatics::PlaySoundAtLocation(this, OnHitSound, GetActorLocation());
+    }
+   
     // 체력바 UI 갱신
     if (CharacterWidget && CharacterWidget->HealthBar)
     {
