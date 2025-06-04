@@ -305,6 +305,11 @@ public:
     USoundBase* ReloadSound;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "C_Sound")
     USoundBase* OnHitSound;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "C_Sound")
+    USoundBase* AbilitySelectSound;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "C_Sound")
+    USoundBase* BGMSound; // 배경음악
+
 
     // 게임 진행중에 이벤트 발생시 스탯 변경하는 함수//////////////////////////////
     // ====== 스탯 설정 함수 ======
