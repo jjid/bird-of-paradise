@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 
 #include "CoreMinimal.h"
 #include "AIController.h"
@@ -13,6 +13,8 @@ public:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaSeconds) override;
 
+    class AUNPJCharacter* PlayerCharacter = nullptr; // JH_ÌîåÎ†àÏù¥Ïñ¥ Ï∫êÎ¶≠ÌÑ∞ 
+
 protected:
     UPROPERTY(EditAnywhere, Category = "AI")
     float AcceptanceRadius = 1200.f;
@@ -24,7 +26,7 @@ protected:
     float JumpAttackCooldown = 3.0f;
 
     UPROPERTY(EditAnywhere, Category = "AI")
-    float JumpArc = 0.5f; // ∆˜π∞º± ∞Ó∑¸ (0.0 = ¡˜º±, 1.0 = ≥Ù¿Ã ¡°«¡)
+    float JumpArc = 0.5f;
 
 private:
     UPROPERTY()
@@ -36,4 +38,10 @@ private:
     FTimerHandle JumpAttackCooldownHandle;
 
     void PerformJumpAttack();
+
+    bool bJumpAttackDamage = false;
+
+    UFUNCTION()
+    void OnJumpAttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };

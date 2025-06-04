@@ -1,4 +1,4 @@
-#include "DaggerBoss.h"
+ï»¿#include "DaggerBoss.h"
 #include "Kismet/GameplayStatics.h"
 #include "BossCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -44,9 +44,9 @@ void ADaggerBoss::Tick(float DeltaSeconds)
             FVector SpawnOrigin = ControlledPawn->GetActorLocation() + FVector(0, 0, 50.f);
             FVector TargetLocation = PlayerPawn->GetActorLocation();
 
-            // ¿©·¯ ¹ß »ı¼º
+            // ì—¬ëŸ¬ ë°œ ìƒì„±
             const int32 NumDaggers = 4;
-            const float SpreadAngle = 15.0f; // °¢µµ Â÷ÀÌ
+            const float SpreadAngle = 15.0f; // ê°ë„ ì°¨ì´
 
             FVector Direction = (TargetLocation - SpawnOrigin).GetSafeNormal();
             FRotator BaseRot = Direction.Rotation();

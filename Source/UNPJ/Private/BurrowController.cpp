@@ -1,13 +1,28 @@
-#include "BurrowController.h"
+Ôªø#include "BurrowController.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.h"
 #include "TimerManager.h"
+#include "UNPJ/UNPJCharacter.h"
+#include "Components/CapsuleComponent.h"
 
 void ABurrowController::BeginPlay()
 {
     Super::BeginPlay();
     PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+    PlayerCharacter = Cast<AUNPJCharacter>(PlayerPawn); // JH_ Ï∫êÎ¶≠ÌÑ∞ Í∞ÄÏ†∏Ïò§Í∏∞
+
+    // Ïò§Î≤ÑÎû© Îç∏Î¶¨Í≤åÏù¥Ìä∏ Î∞îÏù∏Îî©
+    ACharacter* EnemyChar = Cast<ACharacter>(GetPawn());
+    if (EnemyChar)
+    {
+        UCapsuleComponent* Capsule = EnemyChar->GetCapsuleComponent();
+        if (Capsule)
+        {
+            Capsule->OnComponentBeginOverlap.AddUniqueDynamic(this, &ABurrowController::OnAmbushOverlap);
+        }
+    }
 }
 
 void ABurrowController::Tick(float DeltaSeconds)
@@ -18,27 +33,6 @@ void ABurrowController::Tick(float DeltaSeconds)
 
     ACharacter* EnemyChar = Cast<ACharacter>(GetPawn());
     if (!EnemyChar) return;
-
-    // ∫ŒµÂ∑ØøÓ πˆ∑ŒøÏ ¡ﬂ¿Ã∂Û∏È Z∫∏∞£∏∏ √≥∏Æ
-    if (bIsBurrowing)
-    {
-        BurrowElapsed += DeltaSeconds;
-        float Alpha = FMath::Clamp(BurrowElapsed / BurrowInterpTime, 0.f, 1.f);
-        FVector Loc = EnemyChar->GetActorLocation();
-        Loc.Z = FMath::Lerp(BurrowStartZ, BurrowEndZ, Alpha);
-        EnemyChar->SetActorLocation(Loc);
-
-        if (Alpha >= 1.0f)
-        {
-            bIsBurrowing = false;
-            EnemyChar->SetActorHiddenInGame(true);
-            EnemyChar->SetActorEnableCollision(false);
-
-            GetWorld()->GetTimerManager().SetTimer(BurrowTimerHandle, this, &ABurrowController::ExecuteAmbush, BurrowDelay, false);
-        }
-
-        return;
-    }
 
     float Distance = FVector::Dist(PlayerPawn->GetActorLocation(), EnemyChar->GetActorLocation());
 
@@ -69,7 +63,6 @@ void ABurrowController::Tick(float DeltaSeconds)
     else if (Distance <= AcceptanceRadius)
     {
         StopMovement();
-
         AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(EnemyChar);
         if (Enemy)
         {
@@ -85,13 +78,12 @@ void ABurrowController::StartBurrow()
     ACharacter* EnemyChar = Cast<ACharacter>(GetPawn());
     if (!EnemyChar) return;
 
-    FVector StartLoc = EnemyChar->GetActorLocation();
-    BurrowStartZ = StartLoc.Z;
-    BurrowEndZ = BurrowStartZ - 200.f;
-
-    BurrowElapsed = 0.0f;
-    bIsBurrowing = true;
+    EnemyChar->SetActorHiddenInGame(true);
+    EnemyChar->SetActorEnableCollision(false);
     bIsBurrowed = true;
+
+
+    GetWorld()->GetTimerManager().SetTimer(BurrowTimerHandle, this, &ABurrowController::ExecuteAmbush, BurrowDelay, false);
 }
 
 void ABurrowController::ExecuteAmbush()
@@ -106,6 +98,8 @@ void ABurrowController::ExecuteAmbush()
     EnemyChar->SetActorHiddenInGame(false);
     EnemyChar->SetActorEnableCollision(true);
 
+    bBurrowAttackDamage = false;
+
     AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(EnemyChar);
     if (Enemy)
     {
@@ -115,9 +109,23 @@ void ABurrowController::ExecuteAmbush()
     bIsBurrowed = false;
     bIsInCooldown = true;
 
+
     GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, [this]()
         {
             bIsInCooldown = false;
-            UE_LOG(LogTemp, Warning, TEXT("ƒ≈∏¿” ≥°"));
         }, AttackCooldown, false);
+}
+
+// Ïò§Î≤ÑÎû© ÏΩúÎ∞±
+void ABurrowController::OnAmbushOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    if (!bBurrowAttackDamage && OtherActor == PlayerPawn)
+    {
+        bBurrowAttackDamage = true;
+        if (PlayerCharacter)
+        {
+            PlayerCharacter->SetHP(-20.f); // 
+        }
+    }
 }

@@ -1,8 +1,10 @@
-#include "TeleportController.h"
+﻿#include "TeleportController.h"
 #include "Kismet/GameplayStatics.h"
 #include "EnemyCharacter.h"
 #include "GameFramework/Character.h"
 #include "TimerManager.h"
+#include "UNPJ/UNPJCharacter.h"
+#include "Components/CapsuleComponent.h"
 
 void ATeleportController::BeginPlay()
 {
@@ -21,7 +23,15 @@ void ATeleportController::BeginPlay()
         }
 
         bIsMoving = true;
+
+        // 오버랩 함수 바인딩 
+        UCapsuleComponent* Capsule = Enemy->GetCapsuleComponent();
+        if (Capsule)
+        {
+            Capsule->OnComponentBeginOverlap.AddUniqueDynamic(this, &ATeleportController::OnJumpAttackOverlap);
+        }
     }
+    PlayerCharacter = Cast<AUNPJCharacter>(PlayerPawn); // JH_ 캐릭터 가져오기
 }
 
 void ATeleportController::Tick(float DeltaSeconds)
@@ -83,11 +93,13 @@ void ATeleportController::PerformJumpAttack()
     ACharacter* ControlledChar = Cast<ACharacter>(GetPawn());
     if (!ControlledChar || !PlayerPawn) return;
 
+    bJumpAttackDamage = false; // 점프 어택 시작 시 초기화
+
     FVector StartLoc = ControlledChar->GetActorLocation();
     FVector TargetLoc = PlayerPawn->GetActorLocation();
 
     FVector Dir = (TargetLoc - StartLoc).GetSafeNormal2D();
-    FVector LaunchVelocity = Dir * 1000.f + FVector(0.f, 0.f, 800.f); // �� + �� ����
+    FVector LaunchVelocity = Dir * 1000.f + FVector(0.f, 0.f, 800.f); // �� + �� ����
 
     ControlledChar->SetActorRotation(Dir.Rotation());
     ControlledChar->LaunchCharacter(LaunchVelocity, true, true);
@@ -111,4 +123,18 @@ void ATeleportController::PerformJumpAttack()
             }
 
         }, 1.0f, false);
+}
+
+void ATeleportController::OnJumpAttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    ACharacter* EnemyChar = Cast<ACharacter>(GetPawn());
+    if (!bJumpAttackDamage && EnemyChar && EnemyChar->GetCharacterMovement()->IsFalling() && OtherActor == PlayerPawn)
+    {
+        bJumpAttackDamage = true; // 한 번만 대미지
+        if (PlayerCharacter)
+        {
+            PlayerCharacter->SetHP(-10.f); // 플레이어 HP 감소
+        }
+    }
 }

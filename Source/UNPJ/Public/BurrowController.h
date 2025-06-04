@@ -13,6 +13,8 @@ public:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaSeconds) override;
 
+    class AUNPJCharacter* PlayerCharacter = nullptr; // JH_플레이어 캐릭터 
+
 protected:
     UPROPERTY(EditAnywhere, Category = "AI")
     float AcceptanceRadius = 1000.f;
@@ -26,9 +28,6 @@ protected:
     UPROPERTY(EditAnywhere, Category = "AI")
     float AttackCooldown = 5.0f;
 
-    UPROPERTY(EditAnywhere, Category = "AI")
-    float BurrowInterpTime = 1.0f; // 땅속으로 들어가는 데 걸리는 시간
-
 private:
     UPROPERTY()
     APawn* PlayerPawn = nullptr;
@@ -37,15 +36,15 @@ private:
     bool bIsBurrowed = false;
     bool bIsInCooldown = false;
 
-    // 부드러운 Burrow용 변수
-    bool bIsBurrowing = false;
-    float BurrowElapsed = 0.0f;
-    float BurrowStartZ = 0.0f;
-    float BurrowEndZ = 0.0f;
-
     FTimerHandle BurrowTimerHandle;
     FTimerHandle CooldownTimerHandle;
 
+    bool bBurrowAttackDamage = false;
+
     void StartBurrow();
     void ExecuteAmbush();
+
+    UFUNCTION()
+    void OnAmbushOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };
