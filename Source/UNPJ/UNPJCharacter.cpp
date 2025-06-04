@@ -17,6 +17,7 @@
 #include "DrawDebugHelpers.h" // 디버그 그리기용 헤더 추가
 #include "Blueprint/UserWidget.h" // 위젯 사용을 위한 헤더 추가
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/AudioComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AUNPJCharacter
@@ -134,6 +135,8 @@ void AUNPJCharacter::BeginPlay()
             }
         }
     }
+    // BGM 재생
+    if( BGMSound ) UGameplayStatics::PlaySound2D(GetWorld(), BGMSound, 1.0f, 1.0f, 0.0f, nullptr, nullptr, true); 
 }
 
 void AUNPJCharacter::Tick(float DeltaTime)
@@ -383,6 +386,8 @@ void AUNPJCharacter::Dash()
 {
     if ((CharacterState != ECharacterState::Idle && CharacterState != ECharacterState::Jumping) || !bCanDash) return;
 
+    if( DashSound ) UGameplayStatics::PlaySoundAtLocation(this, DashSound, GetActorLocation());
+    
     bCanDash = false;
 
     FVector ForwardDirection = GetActorForwardVector();
@@ -449,6 +454,11 @@ void AUNPJCharacter::SetHP(float AddHP)
 {
     CurrentHP = FMath::Clamp(CurrentHP + AddHP, 0.f, MaxHP);
 
+    if( AddHP < 0.f ) // 체력 감소시 온힛 사운드 재생
+    {
+        if (OnHitSound) UGameplayStatics::PlaySoundAtLocation(this, OnHitSound, GetActorLocation());
+    }
+   
     // 체력바 UI 갱신
     if (CharacterWidget && CharacterWidget->HealthBar)
     {
@@ -502,7 +512,11 @@ void AUNPJCharacter::SetExp(float AddExp)
     if (CurrentExp >= MaxExp)
     {
         // 사운드 재생
-        if (LevelUpSound) UGameplayStatics::PlaySoundAtLocation(this, LevelUpSound, GetActorLocation());
+        UAudioComponent* AudioComp = UGameplayStatics::SpawnSoundAtLocation(this, LevelUpSound, GetActorLocation());
+        if (AudioComp)
+        {
+            AudioComp->bIsUISound = true; // 게임 일시정지와 무관하게 재생
+        }
 
         // 레벨업 처리 (예: 최대 경험치 증가, 현재 경험치 초기화 등)
         CurrentExp = 0.f; // 경험치 초기화
@@ -519,19 +533,27 @@ void AUNPJCharacter::SetExp(float AddExp)
         //UE_LOG(LogTemp, Warning, TEXT("레벨업! 새로운 최대 경험치: %.0f"), MaxExp);
 
         // 어빌리티 셀렉트 위젯 표시
-        if (AbilitySelectWidget)
-        {
-            AbilitySelectWidget->AddToViewport();
-            UGameplayStatics::SetGamePaused(GetWorld(), true); // 게임 멈춤
-
-            AbilitySelectWidget->CreateAbilitySelectWidgets();
-            // 마우스 커서 및 UI 입력 활성화
-            if (APlayerController* PC = Cast<APlayerController>(GetController()))
+        // 0.5초 뒤에 어빌리티 셀렉트 위젯 표시
+        FTimerHandle AbilityWidgetTimerHandle;
+        GetWorld()->GetTimerManager().SetTimer(
+            AbilityWidgetTimerHandle,
+            [this]()
             {
-                PC->bShowMouseCursor = true;
-                PC->SetInputMode(FInputModeUIOnly());
-            }
-        }
+                if (AbilitySelectWidget)
+                {
+                    AbilitySelectWidget->AddToViewport();
+                    UGameplayStatics::SetGamePaused(GetWorld(), true);
+
+                    AbilitySelectWidget->CreateAbilitySelectWidgets();
+                    if (APlayerController* PC = Cast<APlayerController>(GetController()))
+                    {
+                        PC->bShowMouseCursor = true;
+                        PC->SetInputMode(FInputModeUIOnly());
+                    }
+                }
+            },
+            0.7f, false
+        );
     }
 }
 

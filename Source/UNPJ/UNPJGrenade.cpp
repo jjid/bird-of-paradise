@@ -66,6 +66,9 @@ void AUNPJGrenade::Explode()
         );
         
     }
+    // 사운드 재생
+    if (BoomSound) UGameplayStatics::PlaySoundAtLocation(this, BoomSound, GetActorLocation());
+    
     // 폭발 범위 디버그(빨간색 원)
     //UE_LOG(LogTemp, Warning, TEXT("폭발 범위 : %f"), ExplosionRadius);
     //DrawDebugSphere(GetWorld(), GetActorLocation(), ExplosionRadius, 32, FColor::Red, false, 2.0f);
