@@ -2,10 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
-#include "EControllerLongDistance.generated.h"
+#include "GarenBoss.generated.h"
 
 UCLASS()
-class UNPJ_API AEControllerLongDistance : public AAIController
+class UNPJ_API AGarenBoss : public AAIController
 {
     GENERATED_BODY()
 
@@ -28,7 +28,7 @@ private:
     float ChargeTriggerDistance = 20000.0f;
 
     UPROPERTY(EditAnywhere, Category = "AI")
-    float ChargeSpeed = 2000.f;
+    float ChargeSpeed = 3000.f;
 
     UPROPERTY(EditAnywhere, Category = "AI")
     float WalkSpeed = 400.f;
@@ -37,7 +37,7 @@ private:
     float ChargeCooldownTime = 2.0f;
 
     UPROPERTY(EditAnywhere, Category = "AI")
-    float SpinSpeed = 720.0f; 
+    float SpinSpeed = 720.0f;
 
     FTimerHandle ChargeCooldownTimerHandle;
     bool bCanCharge = true;

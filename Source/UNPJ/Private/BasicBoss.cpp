@@ -1,40 +1,35 @@
-Ôªø#include "EController.h"
+#include "BasicBoss.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Pawn.h"
-#include "EController.h"
-#include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
-#include "EnemyCharacter.h"
-#include "AIController.h"            
-#include "GameFramework/PlayerController.h"
-#include "NavigationSystem.h" 
-#include "UNPJCharacter.h" // ÌîåÎ†àÏù¥Ïñ¥ Ï∫êÎ¶≠ÌÑ∞ Ìó§Îçî
+#include "BossCharacter.h"
+#include "UNPJ/UNPJCharacter.h"
+#include "NavigationSystem.h"
 
-
-
-void AEController::BeginPlay()
+void ABasicBoss::BeginPlay()
 {
     Super::BeginPlay();
 
     PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
     if (PlayerPawn && GetPawn())
     {
         SetFocus(PlayerPawn);
-        MoveToActor(PlayerPawn, AcceptanceRadius-100, true, true, true, nullptr, false);
+        MoveToActor(PlayerPawn, AcceptanceRadius - 100, true, true, true, nullptr, false);
 
-        AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(GetPawn());
-        if (Enemy)
+        ABossCharacter* Boss = Cast<ABossCharacter>(GetPawn());
+        if (Boss)
         {
-            Enemy->PlayWalkAnimation();  
+            Boss->PlayWalkAnimation();
         }
 
         bIsMoving = true;
     }
+
     PlayerCharacter = Cast<AUNPJCharacter>(PlayerPawn);
 }
 
-
-void AEController::Tick(float DeltaSeconds)
+void ABasicBoss::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
 
@@ -44,8 +39,8 @@ void AEController::Tick(float DeltaSeconds)
     float Distance = FVector::Dist(PlayerPawn->GetActorLocation(), ControlledPawn->GetActorLocation());
     float Speed = ControlledPawn->GetVelocity().Size();
 
-    AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(ControlledPawn);
-    if (!Enemy) return;
+    ABossCharacter* Boss = Cast<ABossCharacter>(ControlledPawn);
+    if (!Boss) return;
 
     const bool bIsCloseEnough = Distance <= AcceptanceRadius;
     const bool bIsStopped = Speed < 5.f;
@@ -56,18 +51,20 @@ void AEController::Tick(float DeltaSeconds)
         {
             StopMovement();
             ClearFocus(EAIFocusPriority::Default);
-            Enemy->PlayIdleAnimation();
+            Boss->PlayIdleAnimation();
             bIsMoving = false;
 
-            PlayerCharacter->SetHP(-10.f);
+            if (PlayerCharacter)
+            {
+                PlayerCharacter->SetHP(-10.f); // «√∑π¿ÃæÓ HP ∞®º“
+            }
         }
     }
     else if (!bIsCloseEnough)
     {
-        MoveToActor(PlayerPawn, AcceptanceRadius-100, true, true, true, nullptr, false);
+        MoveToActor(PlayerPawn, AcceptanceRadius - 100, true, true, true, nullptr, false);
         SetFocus(PlayerPawn);
-        Enemy->PlayWalkAnimation();
+        Boss->PlayWalkAnimation();
         bIsMoving = true;
-
     }
 }

@@ -1,4 +1,4 @@
-#include "BurrowController.h"
+﻿#include "BurrowController.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.h"
@@ -39,7 +39,6 @@ void ABurrowController::Tick(float DeltaSeconds)
     if (bIsBurrowed || bIsInCooldown)
         return;
 
-    // �÷��̾ ��Ÿ� ���� ����
     if (Distance <= AttackRange)
     {
         StopMovement();
@@ -48,7 +47,6 @@ void ABurrowController::Tick(float DeltaSeconds)
         return;
     }
 
-    // ���� ����
     if (!bIsMoving || Distance > AcceptanceRadius)
     {
         MoveToActor(PlayerPawn, AcceptanceRadius - 50, true, true, true, nullptr, false);
@@ -115,7 +113,6 @@ void ABurrowController::ExecuteAmbush()
     GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, [this]()
         {
             bIsInCooldown = false;
-            UE_LOG(LogTemp, Warning, TEXT("��Ÿ�� ��"));
         }, AttackCooldown, false);
 }
 
@@ -130,6 +127,5 @@ void ABurrowController::OnAmbushOverlap(UPrimitiveComponent* OverlappedComp, AAc
         {
             PlayerCharacter->SetHP(-20.f); // 
         }
-        //UE_LOG(LogTemp, Warning, TEXT("땅에서 올라오는 동안 오버랩! 대미지 1회 적용"));
     }
 }

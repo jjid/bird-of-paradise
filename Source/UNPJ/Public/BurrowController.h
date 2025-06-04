@@ -13,7 +13,7 @@ public:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaSeconds) override;
 
-    class AUNPJCharacter* PlayerCharacter = nullptr; // JH_í”Œë ˆì´ì–´ ìºë¦­í„° 
+    class AUNPJCharacter* PlayerCharacter = nullptr; // JH_ÇÃ·¹ÀÌ¾î Ä³¸¯ÅÍ 
 
 protected:
     UPROPERTY(EditAnywhere, Category = "AI")
