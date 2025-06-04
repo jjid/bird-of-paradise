@@ -304,7 +304,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "C_Sound")
     USoundBase* ReloadSound;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "C_Sound")
-    USoundBase* OnHitSound; 
+    USoundBase* OnHitSound;
 
     // 게임 진행중에 이벤트 발생시 스탯 변경하는 함수//////////////////////////////
     // ====== 스탯 설정 함수 ======

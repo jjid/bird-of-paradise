@@ -17,6 +17,8 @@
 #include "DrawDebugHelpers.h" // 디버그 그리기용 헤더 추가
 #include "Blueprint/UserWidget.h" // 위젯 사용을 위한 헤더 추가
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/AudioComponent.h"
+
 
 //////////////////////////////////////////////////////////////////////////
 // AUNPJCharacter
@@ -512,7 +514,11 @@ void AUNPJCharacter::SetExp(float AddExp)
     if (CurrentExp >= MaxExp)
     {
         // 사운드 재생
-        if (LevelUpSound) UGameplayStatics::PlaySoundAtLocation(this, LevelUpSound, GetActorLocation());
+        UAudioComponent* AudioComp = UGameplayStatics::SpawnSoundAtLocation(this, LevelUpSound, GetActorLocation());
+        if (AudioComp)
+        {
+            AudioComp->bIsUISound = true; // 게임 일시정지와 무관하게 재생
+        }
 
         // 레벨업 처리 (예: 최대 경험치 증가, 현재 경험치 초기화 등)
         CurrentExp = 0.f; // 경험치 초기화

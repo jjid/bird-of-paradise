@@ -64,4 +64,8 @@ public:
 	// 수류탄 던지는 캐릭터
 	class AUNPJCharacter* OwnerCharacter = nullptr;
 
+	// 수류탄 터지는 사운드
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "C_Sound")
+    USoundBase* BoomSound; 
+
 };
