@@ -9,9 +9,8 @@
   <component name="ChangeListManager">
     <list default="true" id="608f44f5-ff6a-4703-8fc5-ef8ee53a6f5f" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.UNPJ.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.UNPJ.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Hyeonjun/BP_TitleGameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Hyeonjun/BP_TitleGameMode.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/FirstPerson/Blueprints/BP_FirstPersonGameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPerson/Blueprints/BP_FirstPersonGameMode.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Hyeonjun/TitleMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Hyeonjun/TitleMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Hyeonjun/WB_TitleScreen.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Hyeonjun/WB_TitleScreen.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/JunHyuk/JH_Test_Map.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/JunHyuk/JH_Test_Map.umap" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -137,7 +136,7 @@
       <option name="presentableId" value="Default" />
       <updated>1748786562887</updated>
       <workItem from="1748786564516" duration="391000" />
-      <workItem from="1749045095029" duration="712000" />
+      <workItem from="1749045095029" duration="1615000" />
     </task>
     <servers />
   </component>

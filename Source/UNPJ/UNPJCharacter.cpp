@@ -67,6 +67,12 @@ AUNPJCharacter::AUNPJCharacter()
 void AUNPJCharacter::BeginPlay()
 {
     Super::BeginPlay();
+    // 입력 모드를 게임 전용으로 복원
+    if (APlayerController* PC = Cast<APlayerController>(GetController()))
+    {
+        PC->bShowMouseCursor = false;
+        PC->SetInputMode(FInputModeGameOnly());
+    }
     GunIdleRot = SM_Gun->GetRelativeRotation(); // 총의 초기 회전값 저장
     // WBP_Character 위젯 생성 및 화면에 추가
     if( DeathWidgetClass )
