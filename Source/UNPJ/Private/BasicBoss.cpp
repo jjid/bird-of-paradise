@@ -1,9 +1,9 @@
 #include "BasicBoss.h"
 #include "Kismet/GameplayStatics.h"
-#include "GameFramework/Pawn.h"
 #include "GameFramework/Character.h"
 #include "BossCharacter.h"
 #include "UNPJ/UNPJCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "NavigationSystem.h"
 
 void ABasicBoss::BeginPlay()
@@ -11,22 +11,27 @@ void ABasicBoss::BeginPlay()
     Super::BeginPlay();
 
     PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+    PlayerCharacter = Cast<AUNPJCharacter>(PlayerPawn);
 
     if (PlayerPawn && GetPawn())
     {
         SetFocus(PlayerPawn);
-        MoveToActor(PlayerPawn, AcceptanceRadius - 100, true, true, true, nullptr, false);
+        MoveToActor(PlayerPawn, AcceptanceRadius-270 , true, true, true, nullptr, false);
 
         ABossCharacter* Boss = Cast<ABossCharacter>(GetPawn());
         if (Boss)
         {
             Boss->PlayWalkAnimation();
+
+            UCapsuleComponent* Capsule = Boss->GetCapsuleComponent();
+            if (Capsule)
+            {
+                Capsule->OnComponentBeginOverlap.AddUniqueDynamic(this, &ABasicBoss::OnOverlapWithPlayer);
+            }
         }
 
         bIsMoving = true;
     }
-
-    PlayerCharacter = Cast<AUNPJCharacter>(PlayerPawn);
 }
 
 void ABasicBoss::Tick(float DeltaSeconds)
@@ -49,22 +54,37 @@ void ABasicBoss::Tick(float DeltaSeconds)
     {
         if (bIsMoving)
         {
-            StopMovement();
-            ClearFocus(EAIFocusPriority::Default);
+            // StopMovement()는 일부러 제거
             Boss->PlayIdleAnimation();
             bIsMoving = false;
-
-            if (PlayerCharacter)
-            {
-                PlayerCharacter->SetHP(-10.f); // 플레이어 HP 감소
-            }
         }
     }
     else if (!bIsCloseEnough)
     {
-        MoveToActor(PlayerPawn, AcceptanceRadius - 100, true, true, true, nullptr, false);
+        MoveToActor(PlayerPawn, AcceptanceRadius - 270, true, true, true, nullptr, false);
         SetFocus(PlayerPawn);
         Boss->PlayWalkAnimation();
         bIsMoving = true;
     }
+}
+
+void ABasicBoss::OnOverlapWithPlayer(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    if (!bDidAttack && OtherActor == PlayerPawn)
+    {
+        bDidAttack = true;
+
+        if (PlayerCharacter)
+        {
+            PlayerCharacter->SetHP(-10.f);
+        }
+
+        GetWorld()->GetTimerManager().SetTimer(DamageCooldownHandle, this, &ABasicBoss::ResetAttack, DamageCooldown, false);
+    }
+}
+
+void ABasicBoss::ResetAttack()
+{
+    bDidAttack = false;
 }
