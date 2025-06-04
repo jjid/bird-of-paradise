@@ -19,12 +19,32 @@ void ABurrowController::Tick(float DeltaSeconds)
     ACharacter* EnemyChar = Cast<ACharacter>(GetPawn());
     if (!EnemyChar) return;
 
+    // 부드러운 버로우 중이라면 Z보간만 처리
+    if (bIsBurrowing)
+    {
+        BurrowElapsed += DeltaSeconds;
+        float Alpha = FMath::Clamp(BurrowElapsed / BurrowInterpTime, 0.f, 1.f);
+        FVector Loc = EnemyChar->GetActorLocation();
+        Loc.Z = FMath::Lerp(BurrowStartZ, BurrowEndZ, Alpha);
+        EnemyChar->SetActorLocation(Loc);
+
+        if (Alpha >= 1.0f)
+        {
+            bIsBurrowing = false;
+            EnemyChar->SetActorHiddenInGame(true);
+            EnemyChar->SetActorEnableCollision(false);
+
+            GetWorld()->GetTimerManager().SetTimer(BurrowTimerHandle, this, &ABurrowController::ExecuteAmbush, BurrowDelay, false);
+        }
+
+        return;
+    }
+
     float Distance = FVector::Dist(PlayerPawn->GetActorLocation(), EnemyChar->GetActorLocation());
 
     if (bIsBurrowed || bIsInCooldown)
         return;
 
-    // 플레이어가 사거리 내에 있음
     if (Distance <= AttackRange)
     {
         StopMovement();
@@ -33,7 +53,6 @@ void ABurrowController::Tick(float DeltaSeconds)
         return;
     }
 
-    // 평상시 추적
     if (!bIsMoving || Distance > AcceptanceRadius)
     {
         MoveToActor(PlayerPawn, AcceptanceRadius - 50, true, true, true, nullptr, false);
@@ -50,6 +69,7 @@ void ABurrowController::Tick(float DeltaSeconds)
     else if (Distance <= AcceptanceRadius)
     {
         StopMovement();
+
         AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(EnemyChar);
         if (Enemy)
         {
@@ -65,12 +85,13 @@ void ABurrowController::StartBurrow()
     ACharacter* EnemyChar = Cast<ACharacter>(GetPawn());
     if (!EnemyChar) return;
 
-    EnemyChar->SetActorHiddenInGame(true);
-    EnemyChar->SetActorEnableCollision(false);
+    FVector StartLoc = EnemyChar->GetActorLocation();
+    BurrowStartZ = StartLoc.Z;
+    BurrowEndZ = BurrowStartZ - 200.f;
+
+    BurrowElapsed = 0.0f;
+    bIsBurrowing = true;
     bIsBurrowed = true;
-
-
-    GetWorld()->GetTimerManager().SetTimer(BurrowTimerHandle, this, &ABurrowController::ExecuteAmbush, BurrowDelay, false);
 }
 
 void ABurrowController::ExecuteAmbush()
@@ -93,7 +114,6 @@ void ABurrowController::ExecuteAmbush()
 
     bIsBurrowed = false;
     bIsInCooldown = true;
-
 
     GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, [this]()
         {

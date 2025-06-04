@@ -26,6 +26,9 @@ protected:
     UPROPERTY(EditAnywhere, Category = "AI")
     float AttackCooldown = 5.0f;
 
+    UPROPERTY(EditAnywhere, Category = "AI")
+    float BurrowInterpTime = 1.0f; // 땅속으로 들어가는 데 걸리는 시간
+
 private:
     UPROPERTY()
     APawn* PlayerPawn = nullptr;
@@ -33,6 +36,12 @@ private:
     bool bIsMoving = false;
     bool bIsBurrowed = false;
     bool bIsInCooldown = false;
+
+    // 부드러운 Burrow용 변수
+    bool bIsBurrowing = false;
+    float BurrowElapsed = 0.0f;
+    float BurrowStartZ = 0.0f;
+    float BurrowEndZ = 0.0f;
 
     FTimerHandle BurrowTimerHandle;
     FTimerHandle CooldownTimerHandle;
