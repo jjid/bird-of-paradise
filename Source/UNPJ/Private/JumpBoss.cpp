@@ -3,6 +3,8 @@
 #include "BossCharacter.h"
 #include "GameFramework/Character.h"
 #include "TimerManager.h"
+#include "UNPJ/UNPJCharacter.h"
+#include "Components/CapsuleComponent.h"
 
 void AJumpBoss::BeginPlay()
 {
@@ -22,7 +24,15 @@ void AJumpBoss::BeginPlay()
         }
 
         bIsMoving = true;
+
+        // 오버랩 함수 바인딩 
+        UCapsuleComponent* Capsule = Boss->GetCapsuleComponent();
+        if (Capsule)
+        {
+            Capsule->OnComponentBeginOverlap.AddUniqueDynamic(this, &AJumpBoss::OnJumpAttackOverlap);
+        }
     }
+    PlayerCharacter = Cast<AUNPJCharacter>(PlayerPawn); // JH_ 캐릭터 가져오기
 }
 
 void AJumpBoss::Tick(float DeltaSeconds)
@@ -83,6 +93,8 @@ void AJumpBoss::PerformJumpAttack()
     ACharacter* ControlledChar = Cast<ACharacter>(GetPawn());
     if (!ControlledChar || !PlayerPawn) return;
 
+    bJumpAttackDamage = false; // 점프 어택 시작 시 초기화
+
     FVector StartLoc = ControlledChar->GetActorLocation();
     FVector TargetLoc = PlayerPawn->GetActorLocation();
 
@@ -111,4 +123,18 @@ void AJumpBoss::PerformJumpAttack()
             }
 
         }, 1.0f, false);
+}
+
+void AJumpBoss::OnJumpAttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    ACharacter* EnemyChar = Cast<ACharacter>(GetPawn());
+    if (!bJumpAttackDamage && EnemyChar && EnemyChar->GetCharacterMovement()->IsFalling() && OtherActor == PlayerPawn)
+    {
+        bJumpAttackDamage = true; // 한 번만 대미지
+        if (PlayerCharacter)
+        {
+            PlayerCharacter->SetHP(-10.f); // 플레이어 HP 감소
+        }
+    }
 }

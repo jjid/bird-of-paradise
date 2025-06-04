@@ -13,6 +13,8 @@ public:
     virtual void BeginPlay() override;
     virtual void Tick(float DeltaSeconds) override;
 
+    class AUNPJCharacter* PlayerCharacter = nullptr; // JH_플레이어 캐릭터 
+
 protected:
     UPROPERTY(EditAnywhere, Category = "AI")
     float AcceptanceRadius = 1200.f;
@@ -33,4 +35,10 @@ private:
     FTimerHandle JumpAttackCooldownHandle;
 
     void PerformJumpAttack();
+
+    bool bJumpAttackDamage = false;
+
+    UFUNCTION()
+    void OnJumpAttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };
