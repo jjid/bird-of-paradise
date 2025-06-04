@@ -41,9 +41,4 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Spawn")
 	TSubclassOf<AActor> EnemyBlueprintClass4;
 
-	UPROPERTY(EditAnywhere, Category = "Spawn")
-	TSubclassOf<AActor> EnemyBlueprintClass5;
-
-	UPROPERTY(EditAnywhere, Category = "Spawn")
-	TSubclassOf<AActor> EnemyBlueprintClass6;
 };

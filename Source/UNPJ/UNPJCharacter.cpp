@@ -267,7 +267,7 @@ void AUNPJCharacter::Fire()
         return;
     }
     //경험치 증가 - 잘 작동함
-    SetExp(30.f);
+    //SetExp(30.f);
     // 체력 감소 - 잘 작동함
     //SetHP(-10.f);
     // 총알 속도 감소 - 잘 작동함
@@ -531,8 +531,8 @@ void AUNPJCharacter::SetExp(float AddExp)
         FString ExpText = FString::Printf(TEXT("%.0f / %.0f"), CurrentExp, MaxExp);
         CharacterWidget->ExpState->SetText(FText::FromString(ExpText));
 
-        MaxHP += LevelUpHPIncrease; // 최대 체력 증가
-        CurrentHP = MaxHP; // 현재 체력도 최대 체력으로 초기화
+        //MaxHP += LevelUpHPIncrease; // 최대 체력 증가
+        //CurrentHP += 20; // 현재 체력도 최대 체력으로 초기화
         SetHP( CurrentHP ); // UI 갱신을 위해 SetHP 호출
 
         // 레벨업 메시지 출력

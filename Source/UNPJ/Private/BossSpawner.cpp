@@ -47,11 +47,11 @@ void ABossSpawner::Tick(float DeltaTime)
 			}
 			else if (round + 1 == 25)
 			{
-				SpawnEnemyAtPoint(4);
+				SpawnEnemyAtPoint(3);
 			}
 			else if (round + 1 >= 30)
 			{
-				SpawnEnemyAtPoint(5);
+				SpawnEnemyAtPoint(3);
 			}
 		}
 		time = 0;
@@ -86,12 +86,4 @@ void ABossSpawner::SpawnEnemyAtPoint(int tempInt)
 	{
 		GetWorld()->SpawnActor<AActor>(EnemyBlueprintClass4, SpawnLocation, SpawnRotation);
 	}
-	else if (tempInt == 4)
-	{
-		GetWorld()->SpawnActor<AActor>(EnemyBlueprintClass5, SpawnLocation, SpawnRotation);
-	}
-	else if (tempInt == 5)
-	{
-		GetWorld()->SpawnActor<AActor>(EnemyBlueprintClass6, SpawnLocation, SpawnRotation);
-	} 
 }

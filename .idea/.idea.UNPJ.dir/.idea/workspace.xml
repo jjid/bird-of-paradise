@@ -8,10 +8,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="608f44f5-ff6a-4703-8fc5-ef8ee53a6f5f" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.UNPJ.dir/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.UNPJ.dir/.idea/projectSettingsUpdater.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.UNPJ.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.UNPJ.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FirstPerson/Blueprints/BP_FirstPersonGameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPerson/Blueprints/BP_FirstPersonGameMode.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Hyeonjun/TitleMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Hyeonjun/TitleMap.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/JunHyuk/JH_Test_Map.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/JunHyuk/JH_Test_Map.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/StarterContent/Architecture/Floor_400x400.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/Architecture/Floor_400x400.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/StarterContent/Blueprints/Blueprint_CeilingLight.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/Blueprints/Blueprint_CeilingLight.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/UNPJ/EController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/UNPJ/EController.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/UNPJ/Private/BossSpawner.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/UNPJ/Private/BossSpawner.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/UNPJ/Public/BossSpawner.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/UNPJ/Public/BossSpawner.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/UNPJ/Spawner.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/UNPJ/Spawner.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/UNPJ/Spawner.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/UNPJ/Spawner.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/UNPJ/UNPJCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/UNPJ/UNPJCharacter.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +66,7 @@
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
         <option name="EXECUTABLE_PATH" value="C:\Program Files\Epic Games\UE_5.5\Engine\Binaries\Win64\UnrealEditor-Win64-DebugGame.exe" />
-        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\UE5\bird-of-paradise\UNPJ.uproject&quot;" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\user\Documents\Unreal Projects\bird-of-paradise\UNPJ.uproject&quot;" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.5" />
         <option name="PASS_PARENT_ENVS" value="1" />
@@ -71,7 +78,7 @@
         <option name="CONFIGURATION" value="DebugGame" />
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
-        <option name="EXECUTABLE_PATH" value="C:\UE5\bird-of-paradise\Binaries\Win64\UNPJ-Win64-DebugGame.exe" />
+        <option name="EXECUTABLE_PATH" value="C:\Users\user\Documents\Unreal Projects\bird-of-paradise\Binaries\Win64\UNPJ-Win64-DebugGame.exe" />
         <option name="MANDATORY_PROGRAM_PARAMETERS" value="" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.5" />
@@ -85,7 +92,7 @@
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
         <option name="EXECUTABLE_PATH" value="C:\Program Files\Epic Games\UE_5.5\Engine\Binaries\Win64\UnrealEditor.exe" />
-        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\UE5\bird-of-paradise\UNPJ.uproject&quot;" />
+        <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;C:\Users\user\Documents\Unreal Projects\bird-of-paradise\UNPJ.uproject&quot;" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.5" />
         <option name="PASS_PARENT_ENVS" value="1" />
@@ -97,7 +104,7 @@
         <option name="CONFIGURATION" value="Development" />
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
-        <option name="EXECUTABLE_PATH" value="C:\UE5\bird-of-paradise\Binaries\Win64\UNPJ.exe" />
+        <option name="EXECUTABLE_PATH" value="C:\Users\user\Documents\Unreal Projects\bird-of-paradise\Binaries\Win64\UNPJ.exe" />
         <option name="MANDATORY_PROGRAM_PARAMETERS" value="" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.5" />
@@ -110,7 +117,7 @@
         <option name="CONFIGURATION" value="Shipping" />
         <option name="PLATFORM" value="Win64" />
         <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
-        <option name="EXECUTABLE_PATH" value="C:\UE5\bird-of-paradise\Binaries\Win64\UNPJ-Win64-Shipping.exe" />
+        <option name="EXECUTABLE_PATH" value="C:\Users\user\Documents\Unreal Projects\bird-of-paradise\Binaries\Win64\UNPJ-Win64-Shipping.exe" />
         <option name="MANDATORY_PROGRAM_PARAMETERS" value="" />
         <option name="CUSTOM_PROGRAM_PARAMETERS" value="" />
         <option name="WORKING_DIRECTORY" value="C:\Program Files\Epic Games\UE_5.5" />
@@ -137,6 +144,7 @@
       <updated>1748786562887</updated>
       <workItem from="1748786564516" duration="391000" />
       <workItem from="1749045095029" duration="1615000" />
+      <workItem from="1749049002377" duration="4720000" />
     </task>
     <servers />
   </component>
@@ -146,5 +154,23 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.OperationCanceledException" breakIfHandledByOtherCode="false" displayValue="System.OperationCanceledException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.Tasks.TaskCanceledException" breakIfHandledByOtherCode="false" displayValue="System.Threading.Tasks.TaskCanceledException" />
+          <option name="timeStamp" value="2" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="3" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

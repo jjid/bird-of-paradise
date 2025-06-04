@@ -19,6 +19,7 @@ void ASpawner::BeginPlay()
 {
 	Super::BeginPlay();
 	randomSpawnCycle = FMath::RandRange(MinSpawnCycle[round / 5], MaxSpawnCycle[round / 5]);
+	SpawnEnemyAtPoint(0);
 }
 
 // Called every frame
@@ -52,21 +53,29 @@ void ASpawner::Tick(float DeltaTime)
 		if (SpawnCheck)
 		{
 			RandomFloat = FMath::FRandRange(1.f, 100.f);
-			if (RandomFloat < 0)
+			if (RandomFloat < 20)
 			{
 				SpawnEnemyAtPoint(0);
 			}
-			else if (RandomFloat < 33)
+			else if (RandomFloat < 40)
 			{
 				SpawnEnemyAtPoint(1);
 			}
-			else if (RandomFloat < 66)
+			else if (RandomFloat < 60)
 			{
 				SpawnEnemyAtPoint(2);
 			}
-			else if (RandomFloat < 100)
+			else if (RandomFloat < 80)
 			{
 				SpawnEnemyAtPoint(3);
+			}
+			else if (RandomFloat < 95)
+			{
+				SpawnEnemyAtPoint(4);
+			}
+			else if (RandomFloat < 100)
+			{
+				SpawnEnemyAtPoint(5);
 			}
 			SpawnCheck = false;
 		}
@@ -97,7 +106,15 @@ void ASpawner::SpawnEnemyAtPoint(int tempInt)
 	} else if (tempInt == 3)
 	{
 		GetWorld()->SpawnActor<AActor>(EnemyBlueprintClass4, SpawnLocation, SpawnRotation);
-	} 
+	}
+	else if (tempInt == 4)
+	{
+		GetWorld()->SpawnActor<AActor>(EnemyBlueprintClass5, SpawnLocation, SpawnRotation);
+	}
+	else if (tempInt == 5)
+	{
+		GetWorld()->SpawnActor<AActor>(EnemyBlueprintClass6, SpawnLocation, SpawnRotation);
+	}
 }
 
 void ASpawner::SpawnTumbleweedAbovePlayer()

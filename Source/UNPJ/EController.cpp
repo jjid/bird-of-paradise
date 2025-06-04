@@ -59,7 +59,7 @@ void AEController::Tick(float DeltaSeconds)
             Enemy->PlayIdleAnimation();
             bIsMoving = false;
 
-            PlayerCharacter->SetHP(-10.f);
+            PlayerCharacter->SetHP(-5.f);
         }
     }
     else if (!bIsCloseEnough)
