@@ -2,27 +2,16 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.h"
-#include "TimerManager.h"
 #include "UNPJ/UNPJCharacter.h"
-#include "Components/CapsuleComponent.h"
+#include "TimerManager.h"
 
 void ABurrowController::BeginPlay()
 {
     Super::BeginPlay();
     PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+    PlayerCharacter = Cast<AUNPJCharacter>(PlayerPawn);
 
-    PlayerCharacter = Cast<AUNPJCharacter>(PlayerPawn); // JH_ 캐릭터 가져오기
-
-    // 오버랩 델리게이트 바인딩
-    ACharacter* EnemyChar = Cast<ACharacter>(GetPawn());
-    if (EnemyChar)
-    {
-        UCapsuleComponent* Capsule = EnemyChar->GetCapsuleComponent();
-        if (Capsule)
-        {
-            Capsule->OnComponentBeginOverlap.AddUniqueDynamic(this, &ABurrowController::OnAmbushOverlap);
-        }
-    }
+    // 오버랩 델리게이트 제거됨
 }
 
 void ABurrowController::Tick(float DeltaSeconds)
@@ -82,7 +71,6 @@ void ABurrowController::StartBurrow()
     EnemyChar->SetActorEnableCollision(false);
     bIsBurrowed = true;
 
-
     GetWorld()->GetTimerManager().SetTimer(BurrowTimerHandle, this, &ABurrowController::ExecuteAmbush, BurrowDelay, false);
 }
 
@@ -106,26 +94,22 @@ void ABurrowController::ExecuteAmbush()
         Enemy->PlaySmashAttackAnimation();
     }
 
+    float HitDistance = FVector::Dist(EnemyChar->GetActorLocation(), PlayerPawn->GetActorLocation());
+
+    if (!bBurrowAttackDamage && HitDistance <= AmbushHitRadius)
+    {
+        bBurrowAttackDamage = true;
+        if (PlayerCharacter)
+        {
+            PlayerCharacter->SetHP(-10.f);
+        }
+    }
+
     bIsBurrowed = false;
     bIsInCooldown = true;
-
 
     GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, [this]()
         {
             bIsInCooldown = false;
         }, AttackCooldown, false);
-}
-
-// 오버랩 콜백
-void ABurrowController::OnAmbushOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-    if (!bBurrowAttackDamage && OtherActor == PlayerPawn)
-    {
-        bBurrowAttackDamage = true;
-        if (PlayerCharacter)
-        {
-            PlayerCharacter->SetHP(-20.f); // 
-        }
-    }
 }

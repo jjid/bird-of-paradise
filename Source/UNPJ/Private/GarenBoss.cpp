@@ -3,12 +3,32 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BossCharacter.h"
 #include "UNPJ/UNPJCharacter.h"
-#include "Components/CapsuleComponent.h"
+#include "TimerManager.h"
 
 void AGarenBoss::ResetCharge()
 {
     bCanCharge = true;
-    bAttackDamage = true; // 다음 돌진에서 다시 데미지 가능
+    bAttackDamage = true;
+}
+
+void AGarenBoss::EndCharge()
+{
+    if (!bIsCharging || !GetPawn()) return;
+
+    bIsCharging = false;
+    bIsMoving = false;
+
+    ABossCharacter* Boss = Cast<ABossCharacter>(GetPawn());
+    if (Boss)
+    {
+        Boss->GetCharacterMovement()->Velocity = FVector::ZeroVector;
+        Boss->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+        Boss->GetCharacterMovement()->GravityScale = 1.f;
+        Boss->PlayIdleAnimation();
+
+        MoveToActor(PlayerPawn, AcceptanceRadius - 100, true, true, true, nullptr, false);
+        SetFocus(PlayerPawn);
+    }
 }
 
 void AGarenBoss::BeginPlay()
@@ -16,7 +36,7 @@ void AGarenBoss::BeginPlay()
     Super::BeginPlay();
 
     PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-    PlayerCharacter = Cast<AUNPJCharacter>(PlayerPawn); 
+    PlayerCharacter = Cast<AUNPJCharacter>(PlayerPawn);
 
     if (PlayerPawn && GetPawn())
     {
@@ -28,12 +48,6 @@ void AGarenBoss::BeginPlay()
         {
             Boss->PlayWalkAnimation();
             Boss->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-
-            UCapsuleComponent* Capsule = Boss->GetCapsuleComponent();
-            if (Capsule)
-            {
-                Capsule->OnComponentBeginOverlap.AddUniqueDynamic(this, &AGarenBoss::OnAttackOverlap);
-            }
         }
 
         bIsMoving = true;
@@ -51,7 +65,6 @@ void AGarenBoss::Tick(float DeltaSeconds)
 
     float Distance = FVector::Dist(PlayerPawn->GetActorLocation(), ControlledPawn->GetActorLocation());
     float Speed = ControlledPawn->GetVelocity().Size();
-
     const bool bIsCloseEnough = Distance <= AcceptanceRadius;
 
     // 돌진 조건
@@ -59,47 +72,60 @@ void AGarenBoss::Tick(float DeltaSeconds)
     {
         bIsCharging = true;
         bCanCharge = false;
-        bAttackDamage = false; // 돌진 중 데미지 한 번만
+        bAttackDamage = false;
 
         StopMovement();
         ClearFocus(EAIFocusPriority::Default);
 
         FVector BossLocation = ControlledPawn->GetActorLocation();
         FVector PlayerLocation = PlayerPawn->GetActorLocation();
-        FVector FlatTarget = FVector(PlayerLocation.X, PlayerLocation.Y, BossLocation.Z); // Z 고정
 
-        FVector Direction = (FlatTarget - BossLocation).GetSafeNormal();
+        FVector Direction = (PlayerLocation - BossLocation).GetSafeNormal();
         FVector LaunchVelocity = Direction * ChargeSpeed;
 
+        FRotator NewRotation = Direction.Rotation();
+        ControlledPawn->SetActorRotation(NewRotation);
+
+        Boss->GetCharacterMovement()->StopMovementImmediately();
+        Boss->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
         Boss->GetCharacterMovement()->GravityScale = 0.f;
+        Boss->GetCharacterMovement()->Velocity = LaunchVelocity;
+
         Boss->PlayWalkAnimation();
-        Boss->LaunchCharacter(LaunchVelocity, true, true);
 
         GetWorld()->GetTimerManager().SetTimer(
             ChargeCooldownTimerHandle, this, &AGarenBoss::ResetCharge, ChargeCooldownTime, false
         );
+
+        GetWorld()->GetTimerManager().SetTimer(
+            ChargeEndTimerHandle, this, &AGarenBoss::EndCharge, ChargeDurationTime, false
+        );
     }
 
-    // 회전
-    if (bIsCharging && ControlledPawn)
+    // 돌진 중 회전 연출
+    if (bIsCharging)
     {
         FRotator CurrentRotation = ControlledPawn->GetActorRotation();
         float DeltaYaw = SpinSpeed * DeltaSeconds;
-        FRotator NewRotation = FRotator(0.f, CurrentRotation.Yaw + DeltaYaw, 0.f);
+        FRotator NewRotation = FRotator(CurrentRotation.Pitch, CurrentRotation.Yaw + DeltaYaw, CurrentRotation.Roll);
         ControlledPawn->SetActorRotation(NewRotation);
     }
 
-    // 돌진 종료 조건
+    // 직접 충돌 거리 판정
+    if (bIsCharging && !bAttackDamage && PlayerCharacter)
+    {
+        float HitDistance = FVector::Dist(PlayerPawn->GetActorLocation(), ControlledPawn->GetActorLocation());
+        if (HitDistance <= 700.f) // 충돌 거리 (필요 시 조절)
+        {
+            bAttackDamage = true;
+            PlayerCharacter->SetHP(-20.f); // 원하는 데미지
+        }
+    }
+
+    // 너무 멀면 강제 종료
     if (bIsCharging && Distance > 1500.f)
     {
-        bIsCharging = false;
-        bIsMoving = false;
-
-        Boss->GetCharacterMovement()->GravityScale = 1.f;
-        Boss->PlayIdleAnimation();
-
-        MoveToActor(PlayerPawn, AcceptanceRadius - 100, true, true, true, nullptr, false);
-        SetFocus(PlayerPawn);
+        EndCharge();
     }
 
     // 추적
@@ -123,18 +149,12 @@ void AGarenBoss::Tick(float DeltaSeconds)
 
             bIsMoving = false;
             bIsCharging = false;
-            Boss->GetCharacterMovement()->GravityScale = 1.f;
-        }
-    }
-}
 
-void AGarenBoss::OnAttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-    // 돌진 중 & 아직 공격 안 했고, 플레이어와 충돌 시
-    if (!bAttackDamage && OtherActor == PlayerPawn && PlayerCharacter)
-    {
-        bAttackDamage = true;
-        PlayerCharacter->SetHP(-20.f); // 원하는 만큼의 데미지
+            Boss->GetCharacterMovement()->GravityScale = 1.f;
+            Boss->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+            Boss->GetCharacterMovement()->Velocity = FVector::ZeroVector;
+
+            GetWorld()->GetTimerManager().ClearTimer(ChargeEndTimerHandle);
+        }
     }
 }

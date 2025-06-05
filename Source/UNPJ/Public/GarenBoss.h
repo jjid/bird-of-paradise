@@ -30,26 +30,29 @@ private:
     bool bAttackDamage = true;
 
     UPROPERTY(EditAnywhere, Category = "AI")
-    float ChargeTriggerDistance = 20000.0f;
+    float ChargeTriggerDistance = 4000.0f;
 
     UPROPERTY(EditAnywhere, Category = "AI")
-    float ChargeSpeed = 3000.f;
+    float ChargeSpeed = 4000.f;
 
     UPROPERTY(EditAnywhere, Category = "AI")
     float WalkSpeed = 400.f;
 
     UPROPERTY(EditAnywhere, Category = "AI")
-    float ChargeCooldownTime = 2.0f;
+    float ChargeCooldownTime = 4.0f;
 
     UPROPERTY(EditAnywhere, Category = "AI")
     float SpinSpeed = 720.0f;
 
+    UPROPERTY(EditAnywhere, Category = "AI")
+    float ChargeDurationTime = 4.0f;
+
     FTimerHandle ChargeCooldownTimerHandle;
+    FTimerHandle ChargeEndTimerHandle;
 
     UFUNCTION()
     void ResetCharge();
 
     UFUNCTION()
-    void OnAttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+    void EndCharge();
 };
